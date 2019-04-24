@@ -18,4 +18,14 @@ data class Airline(
         @GenericGenerator(name= "increment", strategy= "increment")
         @Column(nullable = false, updatable = false)
         val id: Long = 0
-)
+) {
+        data class DTO internal constructor(
+                val id: Long = 0,
+                val name: String,
+                val airplanes: List<Airplane.DTO> = emptyList()
+        )
+
+        fun getDTO() = DTO(
+                id, name, airplanes.map { it.getDTO() }
+        )
+}

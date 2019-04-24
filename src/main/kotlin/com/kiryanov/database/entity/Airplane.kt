@@ -19,11 +19,23 @@ data class Airplane(
         val airline: Airline,
 
         @OneToOne(mappedBy = "plane", fetch = FetchType.EAGER)
-        val flight: Flight,
+        val flight: Flight? = null,
 
         @Id
         @GeneratedValue(generator = "increment")
         @GenericGenerator(name= "increment", strategy= "increment")
         @Column(nullable = false, updatable = false)
         val id: Long = 0
-)
+) {
+    data class DTO internal constructor(
+            val id: Long = 0,
+            val model: String,
+            val capacity: String,
+            val airlineId: Long,
+            val flight: Flight? = null
+    )
+
+    fun getDTO() = DTO(
+            id, model, capacity, airline.id
+    )
+}

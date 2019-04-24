@@ -14,7 +14,6 @@ interface ScheduleRepository : JpaRepository<Schedule, Long>
 interface TicketRepository : JpaRepository<Ticket, Long>
 interface UserRepository : JpaRepository<User, Long> {
 
-    @Query(value = "SELECT * from user_table where login = :login",
-            nativeQuery = true)
+    @Query(value = "SELECT u from User u where u.login = :login")
     fun findByLogin(@Param("login") login: String): User?
 }
