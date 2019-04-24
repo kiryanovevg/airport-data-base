@@ -7,11 +7,6 @@ import javax.persistence.*
 @Entity
 @Table(name = "flight")
 data class Flight(
-        @Id
-        @GeneratedValue(generator = "increment")
-        @GenericGenerator(name= "increment", strategy= "increment")
-        @Column(nullable = false, updatable = false)
-        val id: Long,
 
         @OneToOne(optional = false, cascade = [CascadeType.ALL])
         @JoinColumn(name = "schedule_id")
@@ -26,5 +21,11 @@ data class Flight(
         val plane: Airplane,
 
         @OneToMany(mappedBy = "flight", fetch = FetchType.EAGER)
-        val tickets: List<Ticket>
+        val tickets: List<Ticket>,
+
+        @Id
+        @GeneratedValue(generator = "increment")
+        @GenericGenerator(name= "increment", strategy= "increment")
+        @Column(nullable = false, updatable = false)
+        val id: Long = 0
 )

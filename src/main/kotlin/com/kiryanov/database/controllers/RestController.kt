@@ -1,4 +1,4 @@
-package com.kiryanov.database
+package com.kiryanov.database.controllers
 
 import org.springframework.web.bind.annotation.RestController
 

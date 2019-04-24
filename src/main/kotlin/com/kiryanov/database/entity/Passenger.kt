@@ -6,11 +6,6 @@ import javax.persistence.*
 @Entity
 @Table(name = "passenger")
 data class Passenger(
-        @Id
-        @GeneratedValue(generator = "increment")
-        @GenericGenerator(name= "increment", strategy= "increment")
-        @Column(nullable = false, updatable = false)
-        val id: Long,
 
         @Column(nullable = false)
         val surname: String,
@@ -29,5 +24,11 @@ data class Passenger(
 
         @OneToOne(optional = false, cascade = [CascadeType.ALL])
         @JoinColumn(name = "ticket_id", nullable = false)
-        val ticket: Ticket
+        val ticket: Ticket,
+
+        @Id
+        @GeneratedValue(generator = "increment")
+        @GenericGenerator(name= "increment", strategy= "increment")
+        @Column(nullable = false, updatable = false)
+        val id: Long = 0
 )

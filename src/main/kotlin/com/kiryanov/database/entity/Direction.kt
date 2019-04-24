@@ -7,11 +7,6 @@ import javax.persistence.*
 @Entity
 @Table(name = "direction")
 data class Direction(
-        @Id
-        @GeneratedValue(generator = "increment")
-        @GenericGenerator(name= "increment", strategy= "increment")
-        @Column(nullable = false, updatable = false)
-        val id: Long,
 
         @Column(nullable = false)
         val fromCity: String,
@@ -20,5 +15,11 @@ data class Direction(
         val toCity: String,
 
         @OneToOne(mappedBy = "direction", fetch = FetchType.EAGER)
-        val flight: Flight
+        val flight: Flight,
+
+        @Id
+        @GeneratedValue(generator = "increment")
+        @GenericGenerator(name= "increment", strategy= "increment")
+        @Column(nullable = false, updatable = false)
+        val id: Long = 0
 )

@@ -7,11 +7,6 @@ import javax.persistence.*
 @Entity
 @Table(name = "airplane")
 data class Airplane(
-        @Id
-        @GeneratedValue(generator = "increment")
-        @GenericGenerator(name= "increment", strategy= "increment")
-        @Column(nullable = false, updatable = false)
-        val id: Long,
 
         @Column(nullable = false)
         val model: String,
@@ -24,5 +19,11 @@ data class Airplane(
         val airline: Airline,
 
         @OneToOne(mappedBy = "plane", fetch = FetchType.EAGER)
-        val flight: Flight
+        val flight: Flight,
+
+        @Id
+        @GeneratedValue(generator = "increment")
+        @GenericGenerator(name= "increment", strategy= "increment")
+        @Column(nullable = false, updatable = false)
+        val id: Long = 0
 )
