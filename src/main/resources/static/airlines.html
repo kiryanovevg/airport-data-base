@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Airlines</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+</head>
+<body>
+
+<label for="airline_name">
+    <input type="text" placeholder="Airline name" id="airline_name" required>
+</label>
+<button id="btnAdd" type="submit">Добавить</button>
+
+<br>
+<div id="container"></div>
+
+</body>
+</html>
+<script>
+    $(document).ready(function(){
+        loadAirlines();
+
+        $('#btnAdd').click(function () {
+            var name = $('#airline_name').val();
+
+            if (name.trim()) {
+                addAirline(name);
+            } else {
+                alert('Введите имя');
+            }
+        })
+    });
+
+    function addAirline(name) {
+        var body = JSON.stringify({name: name});
+
+        $.ajax({
+            url: "/airlines",
+            type: "POST",
+            contentType:"application/json",
+            data: body,
+            success: function(response) {
+                $('#airline_name').val('');
+                loadAirlines()
+            },
+            error: function(xhr) {
+                showMessage(xhr.responseText)
+            }
+        });
+    }
+
+    function loadAirlines() {
+        setContainer('Loading..');
+        $.ajax({
+            url: "/airlines",
+            type: "GET",
+            success: function(response) {
+                getAirlines(response)
+            },
+            error: function(xhr) {
+                showMessage(xhr.responseText)
+            }
+        });
+    }
+
+    function getAirlines(json) {
+        var html ='';
+
+        $.each(json, function(index, value){
+            var del = '<button onclick="deleteAirLine(' + value.id +')">Х</button>';
+            html = html + '<li>' + value.name + '  ' + del + '</li>';
+        });
+
+        html = '<ul>' + html + '</ul>';
+
+        setContainer(html)
+    }
+
+    function deleteAirLine(id) {
+        $.ajax({
+            url: "/airlines/" + id,
+            type: "DELETE",
+            success: function(response) {
+                loadAirlines()
+            },
+            error: function(xhr) {
+                showMessage(xhr.responseText)
+            }
+        });
+    }
+
+    function setContainer(data) {
+        $('#container').html(data);
+    }
+
+    function showMessage(msg) {
+        alert(msg.toString())
+    }
+</script>

@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 
 @ControllerAdvice
-class ExceptionController {
+class ExceptionHandlerController {
 
     @ExceptionHandler(value = [(RestException::class)])
-    fun handleUserException(e: RestException, request: WebRequest): ResponseEntity<String> {
+    fun handleRestException(e: RestException, request: WebRequest): ResponseEntity<String> {
         return ResponseEntity.badRequest().body(e.message)
     }
 
