@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Airplanes</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
@@ -81,9 +82,9 @@
                     </div>
                     <span>Выбрано: {{ getAirlineFromName(input.selectedAirlineName) }}</span>
 
-                    <div class="d-flex flex-row-reverse">
-                        <button type="button" class="btn btn-primary" v-on:click="addAirplane">Add</button>
+                    <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-secondary mr-1" v-on:click="clearAddField">Clear</button>
+                        <button type="button" class="btn btn-primary" v-on:click="addAirplane">Add</button>
                     </div>
                 </div>
 
@@ -105,8 +106,8 @@
 
             </div>
 
-            <div class="col-md-8">
-                <div class="row" v-if="input.selectedAirplane">
+            <div class="col" v-if="input.selectedAirplane">
+                <div class="d-flex justify-content-between">
                     <h2>{{ input.selectedAirplane.model }}</h2>
                     <button
                             type="button"
@@ -114,6 +115,9 @@
                             v-on:click="deleteAirplane"
                     >Delete</button>
                 </div>
+
+                <div>Capacity: {{ input.selectedAirplane.capacity }}</div>
+                <div>Airline: {{ getAirlineFromId(input.selectedAirplane.airlineId).name }}</div>
             </div>
 
 
@@ -181,7 +185,7 @@
 
                         self.message = null;
                         self.loading.content = true;
-                        self.loading.add = true;
+                        // self.loading.add = true;
 
                         $.ajax({
                             url: "/airplanes",
@@ -189,13 +193,14 @@
                             contentType:"application/json",
                             data: body,
                             success: function(response) {
+                                // self.loadAirlines();
                                 self.loading.content = false;
-                                self.loading.add = false;
                                 self.airplanes.push(response);
                                 self.message = 'Successful added';
                             },
                             error: function(xhr) {
-                                self.loading.add = false;
+                                self.loading.content = false;
+                                // self.loading.add = false;
                                 self.message = xhr.responseText;
                             }
                         });
@@ -282,6 +287,20 @@
                 }
 
                 return val;
+            },
+
+            getAirlineFromId: function (id) {
+                var result = null;
+
+                if (id) {
+                    this.airlines.forEach(function (value) {
+                        if (value.id === id) {
+                            result = value;
+                        }
+                    });
+                }
+
+                return result;
             }
         }
     });

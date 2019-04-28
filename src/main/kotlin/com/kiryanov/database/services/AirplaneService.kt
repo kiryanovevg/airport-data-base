@@ -24,7 +24,11 @@ class AirplaneService {
 
     fun addAirplane(dto: Airplane.DTO,
                     airline: Airline
-    ): Airplane = airplaneRepository.save(Airplane(dto.model, dto.capacity, airline))
+    ): Airplane {
+        if (dto.model.trim().isNotEmpty() && dto.capacity.trim().isNotEmpty()) {
+            return airplaneRepository.save(Airplane(dto.model.trim(), dto.capacity.trim(), airline))
+        } else throw RestException("Пустые поля")
+    }
 
     fun deleteAirplane(id: Long) {
         if (airplaneRepository.existsById(id)) {

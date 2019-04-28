@@ -22,8 +22,10 @@ class AirlineService {
 
     fun addAirline(dto: Airline.DTO?): Airline {
         if (dto != null) {
-            val airline = Airline(dto.name, emptyList())
-            return airlineRepository.save(airline)
+            if (dto.name.trim().isNotEmpty()) {
+                val airline = Airline(dto.name.trim(), emptyList())
+                return airlineRepository.save(airline)
+            } else throw RestException("Пустые поля")
         } else throw RestException("Введите данные")
     }
 

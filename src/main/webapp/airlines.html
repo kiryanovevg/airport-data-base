@@ -17,6 +17,16 @@
             </div>
         </div>
 
+        <hr>
+
+        <div
+                class="alert alert-secondary"
+                role="alert"
+                v-if="message"
+        >
+            Message: {{ message }}
+        </div>
+
         <div class="row">
             <div class="col-md-4">
                 <div class="input-group mb-3">
@@ -29,6 +39,12 @@
                 </div>
 
                 <hr>
+
+                <div class="spinner-border" role="status"
+                     v-if="loading"
+                >
+                    <span class="sr-only">Loading...</span>
+                </div>
 
                 <ul class="list-group"
                 >
@@ -44,22 +60,9 @@
 
                 <hr>
 
-                <div class="spinner-border" role="status"
-                     v-if="loading"
-                >
-                    <span class="sr-only">Loading...</span>
-                </div>
-
-                <div
-                        class="alert alert-secondary"
-                        role="alert"
-                        v-if="message"
-                >
-                    Message: {{ message }}
-                </div>
             </div>
-            <div class="col-md-8">
-                <div class="row" v-if="selected">
+            <div class="col">
+                <div class="d-flex justify-content-between" v-if="selected">
                     <h2>{{ selected.name }}</h2>
                     <button
                             type="button"
