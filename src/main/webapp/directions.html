@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Direction</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<div id="app">
+    <div class="container pt-5">
+        <div class="row">
+            <div class="col">
+                <h1>Direction</h1>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-4">
+
+                <div
+                        class="alert alert-secondary"
+                        role="alert"
+                        v-if="message"
+                >
+                    Message: {{ message }}
+                </div>
+
+                <div class="spinner-border" role="status"
+                     v-if="loading.content"
+                >
+                    <span class="sr-only">Loading...</span>
+                </div>
+
+                <div id="addCity" v-if="!loading.add">
+                    <p>Cities</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="City name" aria-label="Airline name" aria-describedby="basic-addon2"
+                               v-model="input.cityName"
+                        >
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" v-on:click="addCity">Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="input.selectedCity">
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <div>{{input.selectedCity.name}}</div>
+                        <button
+                                type="button"
+                                class="btn btn-danger"
+                                v-on:click="deleteCity"
+                        >X</button>
+                    </div>
+                </div>
+
+                <hr>
+                <ul class="list-group">
+                    <li
+                            class="list-group-item list-group-item-action"
+                            v-for="(city, index) in cities"
+                            v-on:click="selectCity(index)"
+                            v-bind:class="{ active: city === input.selectedCity }"
+                    >
+                        {{index + 1}} - {{ city.name}}
+                    </li>
+                </ul>
+
+                <hr>
+
+            </div>
+
+            <div class="col" v-if="input.selectedAirplane">
+                <div class="d-flex justify-content-between">
+                    <h2>{{ input.selectedAirplane.model }}</h2>
+                    <button
+                            type="button"
+                            class="btn btn-danger ml-4"
+                            v-on:click="deleteAirplane"
+                    >Delete</button>
+                </div>
+
+                <div>Capacity: {{ input.selectedAirplane.capacity }}</div>
+                <div>Airline: {{ getAirlineFromId(input.selectedAirplane.airlineId).name }}</div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            input: {
+                cityName: null,
+                selectedCity: null
+            },
+            loading: {
+                content: false
+            },
+            message: null,
+            cities: [],
+            directions: []
+        },
+        mounted: function () {
+            this.loadCities();
+        },
+        methods: {
+            selectCity: function(index) {
+                this.input.selectedCity = this.cities[index];
+            },
+
+            addCity: function () {
+                var self = this;
+
+                if (self.input.cityName) {
+                    var body = JSON.stringify({
+                        name: self.input.cityName
+                    });
+
+                    self.input.cityName = null;
+                    self.input.selectedCity = null;
+
+                    self.message = null;
+                    self.loading.content = true;
+
+                    $.ajax({
+                        url: "/directions/cities",
+                        type: "POST",
+                        contentType:"application/json",
+                        data: body,
+                        success: function(response) {
+                            self.loading.content = false;
+                            self.cities.push(response);
+                            self.message = 'Successful added';
+                        },
+                        error: function(xhr) {
+                            self.loading.content = false;
+                            self.message = xhr.responseText;
+                        }
+                    });
+                } else {
+                    self.message = "Заполните все поля!"
+                }
+            },
+
+            loadCities: function () {
+                var self = this;
+                self.loading.content = true;
+
+                $.ajax({
+                    url: "/directions/cities",
+                    type: "GET",
+                    success: function(response) {
+                        self.loading.content = false;
+                        self.cities = response;
+                    },
+                    error: function(xhr) {
+                        self.loading.content = false;
+                        self.message = xhr.responseText;
+                    }
+                });
+            },
+
+            deleteCity: function () {
+                var self = this;
+                var selected = self.input.selectedCity;
+
+                self.loading.content = true;
+                self.input.selectedCity = null;
+                self.message = null;
+
+                var index = self.cities.indexOf(selected);
+                if (index > -1) {
+                    self.cities.splice(index, 1);
+                }
+
+                $.ajax({
+                    url: "/directions/cities/" + selected.id,
+                    type: "DELETE",
+                    success: function(response) {
+                        self.loading.content = false;
+                        self.message = "Successful removed!"
+                    },
+                    error: function(xhr) {
+                        self.loading.content = false;
+                        self.message = xhr.responseText;
+                    }
+                });
+            }
+        }
+    });
+</script>

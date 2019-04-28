@@ -8,18 +8,30 @@ import javax.persistence.*
 @Table(name = "direction")
 data class Direction(
 
-        @Column(nullable = false)
-        val fromCity: String,
+        @ManyToOne
+        @JoinColumn(name = "from_city_id")
+        val fromCity: City,
 
-        @Column(nullable = false)
-        val toCity: String,
+        @ManyToOne
+        @JoinColumn(name = "to_city_id")
+        val toCity: City,
 
-        @OneToOne(mappedBy = "direction", fetch = FetchType.EAGER)
-        val flight: Flight,
+        @OneToMany(mappedBy = "direction", fetch = FetchType.LAZY)
+        val flight: List<Flight>,
 
         @Id
         @GeneratedValue(generator = "increment")
         @GenericGenerator(name= "increment", strategy= "increment")
         @Column(nullable = false, updatable = false)
         val id: Long = 0
-)
+) {
+        data class DTO internal constructor(
+                val id: Long = 0,
+                val fromCityId: Long,
+                val toCityId: Long
+        )
+
+        fun getDTO() = DTO(
+                id, fromCity.id, toCity.id
+        )
+}

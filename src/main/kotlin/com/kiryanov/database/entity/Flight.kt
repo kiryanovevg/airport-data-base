@@ -12,7 +12,7 @@ data class Flight(
         @JoinColumn(name = "schedule_id")
         val schedule: Schedule,
 
-        @OneToOne(optional = false, cascade = [CascadeType.ALL])
+        @ManyToOne
         @JoinColumn(name = "direction_id")
         val direction: Direction,
 

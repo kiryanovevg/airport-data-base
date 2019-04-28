@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param
 interface AirlineRepository : JpaRepository<Airline, Long>
 interface AirplaneRepository : JpaRepository<Airplane, Long>
 interface DirectionRepository : JpaRepository<Direction, Long>
+interface CityRepository : JpaRepository<City, Long>
 interface FlightRepository : JpaRepository<Flight, Long>
 interface PassengerRepository : JpaRepository<Passenger, Long>
 interface ScheduleRepository : JpaRepository<Schedule, Long>
