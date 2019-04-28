@@ -14,7 +14,7 @@ data class Airplane(
         @Column(nullable = false)
         val capacity: String,
 
-        @ManyToOne(optional = false, cascade = [CascadeType.ALL])
+        @ManyToOne
         @JoinColumn(name = "airline_id")
         val airline: Airline,
 

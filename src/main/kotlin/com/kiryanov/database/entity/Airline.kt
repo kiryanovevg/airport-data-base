@@ -10,7 +10,7 @@ data class Airline(
         @Column(nullable = false)
         val name: String,
 
-        @OneToMany(mappedBy = "airline", fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "airline", fetch = FetchType.EAGER, orphanRemoval = true, cascade = [CascadeType.REMOVE])
         val airplanes: List<Airplane>,
 
         @Id
