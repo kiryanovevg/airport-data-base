@@ -46,9 +46,11 @@ class DirectionService {
             ?: throw RestException("City not found")
 
     fun addDirection(fromCity: City, toCity: City): Direction {
-        return directionRepository.save(
-                Direction(fromCity, toCity, emptyList())
-        )
+        if (fromCity.id != toCity.id) {
+            return directionRepository.save(
+                    Direction(fromCity, toCity, emptyList())
+            )
+        } else throw RestException("Неверное направление")
     }
 
     fun deleteDirection(id: Long) {

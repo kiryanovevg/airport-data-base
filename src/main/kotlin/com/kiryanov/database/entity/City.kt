@@ -9,10 +9,10 @@ data class City(
         @Column(nullable = false)
         val name: String,
 
-        @OneToMany(mappedBy = "fromCity", fetch = FetchType.LAZY)
+        @OneToMany(mappedBy = "fromCity", fetch = FetchType.LAZY, orphanRemoval = true, cascade = [CascadeType.REMOVE])
         val fromCities: List<Direction>,
 
-        @OneToMany(mappedBy = "toCity", fetch = FetchType.LAZY)
+        @OneToMany(mappedBy = "toCity", fetch = FetchType.LAZY, orphanRemoval = true, cascade = [CascadeType.REMOVE])
         val toCities: List<Direction>,
 
         @Id
