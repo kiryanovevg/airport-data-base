@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <div class="container pt-5 pb-5">
+        <div class="row">
+            <div class="col">
+                <h1>Schedule</h1>
+            </div>
+        </div>
+
+        <hr>
+
+        <div
+                class="alert alert-secondary"
+                role="alert"
+                v-if="message"
+        >
+            Message: {{ message }}
+        </div>
+
+        <div class="row">
+            <div class="col">
+
+                <div class="row">
+                    <div class="col col-md-10">
+                        <div class="d-flex justify-content-between">
+                            <div class="form-group mr-1">
+                                <input type="number" min="1" class="form-control" id="dayInput" placeholder="Day" v-model.number="input.date.day">
+                            </div>
+
+                            <div class="form-group mr-1">
+                                <input type="number" min="1" class="form-control" id="monthInput" placeholder="Month" v-model.number="input.date.month">
+                            </div>
+
+                            <div class="form-group mr-1">
+                                <input type="number" min="1" class="form-control" id="yearInput" placeholder="Year" v-model.number="input.date.year">
+                            </div>
+
+                            <div class="form-group mr-1">
+                                <input type="number" min="1" class="form-control" id="hourInput" placeholder="Hour" v-model.number="input.date.hour">
+                            </div>
+
+                            <div class="form-group mr-1">
+                                <input type="number" min="1" class="form-control" id="minuteInput" placeholder="Minute" v-model.number="input.date.minute">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="button" class="btn btn-outline-primary" v-on:click="setCurrentDate">Текущее время</button>
+                    </div>
+                </div>
+
+                <div class="row d-flex justify-content-center" v-if="!loading.add">
+                    <div class="col">
+                        <div class="d-inline-flex p-2 bd-highlight justify-content-center">
+                            {{ selected.departureDate }}
+                        </div>
+                    </div>
+                    <div class="col-md-auto">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-primary" v-on:click="setDepartureDate">Дата вылета</button>
+                            <button type="button" class="btn btn-primary" v-on:click="addSchedule">Add</button>
+                            <button type="button" class="btn btn-outline-primary" v-on:click="setArrivalDate">Дата прибытия</button>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="d-inline-flex p-2 bd-highlight justify-content-center">
+                            {{ selected.arrivalDate }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status"
+                         v-if="loading.add"
+                    >
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div v-if="selected.schedule">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-inline-flex p-2 bd-highlight">{{ selected.schedule }}</div>
+                        <button
+                                type="button"
+                                class="btn btn-danger"
+                                v-on:click="deleteSchedule"
+                        >X</button>
+                    </div>
+
+                    <hr>
+                </div>
+
+                <ul class="list-group"
+                >
+                    <li
+                            class="list-group-item list-group-item-action"
+                            v-for="(schedule, index) in schedules"
+                            v-on:click="selectSchedule(index)"
+                            v-bind:class="{ active: schedule === selected.schedule }"
+                    >
+                        {{index + 1}} - {{ schedule.departure }} => {{ schedule.arrival }}
+                    </li>
+                </ul>
+
+                <hr>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            input: {
+                date: {
+                    day: null,
+                    month: null,
+                    year: null,
+                    hour: null,
+                    minute: null
+                }
+            },
+            selected: {
+                arrivalDate: null,
+                departureDate: null,
+                schedule: null
+            },
+            loading: {
+                add: false
+            },
+            message: null,
+            schedules: []
+        },
+        mounted: function () {
+            this.loadSchedules()
+        },
+        methods: {
+            selectSchedule: function (index) {
+                this.selected.schedule = this.schedules[index];
+            },
+
+            setCurrentDate: function () {
+                var date = new Date();
+                this.input.date.day = date.getDate();
+                this.input.date.month = date.getMonth() + 1;
+                this.input.date.year = date.getFullYear();
+                this.input.date.hour = date.getHours();
+                this.input.date.minute = date.getMinutes();
+            },
+
+            clearInputFields: function () {
+                this.input.date.day = null;
+                this.input.date.month = null;
+                this.input.date.year = null;
+                this.input.date.hour = null;
+                this.input.date.minute = null;
+            },
+
+            checkInputFields: function () {
+              return this.input.date.year
+                  && this.input.date.month
+                  && this.input.date.day
+                  && this.input.date.hour
+                  && this.input.date.minute
+            },
+
+            setDepartureDate: function () {
+                if (this.checkInputFields()) {
+                    this.selected.departureDate = new Date(
+                        this.input.date.year,
+                        this.input.date.month - 1,
+                        this.input.date.day,
+                        this.input.date.hour,
+                        this.input.date.minute
+                    );
+
+                    this.clearInputFields();
+                    this.message = null;
+                } else {
+                    this.message = "Заполните все поля!"
+                }
+            },
+
+            setArrivalDate: function () {
+                if (this.checkInputFields()) {
+                    this.selected.arrivalDate = new Date(
+                        this.input.date.year,
+                        this.input.date.month - 1,
+                        this.input.date.day,
+                        this.input.date.hour,
+                        this.input.date.minute
+                    );
+
+                    this.clearInputFields();
+                    this.message = null;
+                } else {
+                    this.message = "Заполните все поля!"
+                }
+            },
+
+            loadSchedules: function () {
+                var self = this;
+                self.loading.add = true;
+
+                $.ajax({
+                    url: "/schedule",
+                    type: "GET",
+                    success: function(response) {
+                        self.loading.add = false;
+                        response.forEach(function (item) {
+                            self.schedules.push(self.parseSchedule(item));
+                        });
+
+                        // self.schedules = response;
+                    },
+                    error: function(xhr) {
+                        self.loading.add = false;
+                        self.message = xhr.responseText;
+                    }
+                });
+            },
+
+            addSchedule: function () {
+                var self = this;
+
+                if (self.selected.departureDate && self.selected.arrivalDate) {
+                    var body = JSON.stringify({
+                        departure: self.selected.departureDate,
+                        arrival: self.selected.arrivalDate
+                    });
+
+                    self.selected.departureDate = null;
+                    self.selected.arrivalDate = null;
+                    self.selected.schedule = null;
+
+                    self.message = null;
+                    self.loading.add = true;
+
+                    $.ajax({
+                        url: "/schedule",
+                        type: "POST",
+                        contentType:"application/json",
+                        data: body,
+                        success: function(response) {
+                            self.loading.add = false;
+                            self.schedules.push(self.parseSchedule(response));
+                            self.message = 'Successful added';
+                        },
+                        error: function(xhr) {
+                            self.loading.add = false;
+                            self.message = xhr.responseText;
+                        }
+                    });
+                } else {
+                    self.message = "Выберите даты!"
+                }
+            },
+
+            deleteSchedule: function () {
+                var self = this;
+                var selected = self.selected.schedule;
+
+                self.loading.add = true;
+                self.message = null;
+                self.selected.schedule = null;
+
+                var index = self.schedules.indexOf(selected);
+                if (index > -1) {
+                    self.schedules.splice(index, 1);
+                }
+
+                $.ajax({
+                    url: "/schedule/" + selected.id,
+                    type: "DELETE",
+                    success: function(response) {
+                        self.loading.add = false;
+                        self.message = "Successful removed!";
+                    },
+                    error: function(xhr) {
+                        self.loading.add = false;
+                        self.message = xhr.responseText;
+                    }
+                });
+            },
+
+            parseSchedule: function (item) {
+                item.departure = new Date(Date.parse(item.departure));
+                item.arrival = new Date(Date.parse(item.arrival));
+                return item;
+            }
+        }
+    });
+</script>

@@ -1,6 +1,5 @@
 package com.kiryanov.database.controllers
 
-import com.kiryanov.database.entity.Airplane
 import com.kiryanov.database.entity.City
 import com.kiryanov.database.entity.Direction
 import com.kiryanov.database.services.DirectionService
@@ -49,7 +48,7 @@ class DirectionController {
     }
 
     @DeleteMapping("/{id}")
-    fun deleteAirplanes(@PathVariable("id") id: Long): ResponseEntity<String> {
+    fun deleteDirection(@PathVariable("id") id: Long): ResponseEntity<String> {
         directionService.deleteDirection(id)
         return ResponseEntity.ok("Successful deleted")
     }
