@@ -28,3 +28,6 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+node_modules
+yarn-error.log
