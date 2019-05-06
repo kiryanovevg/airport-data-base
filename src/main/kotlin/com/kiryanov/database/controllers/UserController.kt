@@ -18,20 +18,19 @@ class UserController {
 
     @GetMapping("/register")
     fun registerUser(@RequestParam("login") login: String?,
-                     @RequestParam("password") password: String?
+                     @RequestParam("password") password: String?,
+                     @RequestParam("admin") adminPermission: Boolean?
     ): ResponseEntity<User> {
-        return if (login?.isNotEmpty() == true && password?.isNotEmpty() == true) {
+        return if (login?.isNotEmpty() == true
+                && password?.isNotEmpty() == true
+                && adminPermission?.toString()?.isNotEmpty() == true) {
             ResponseEntity(
-                    userService.addUser(login, password),
+                    userService.addUser(login, password, adminPermission),
                     HttpStatus.OK
             )
-        } else {
-            ResponseEntity(HttpStatus.BAD_REQUEST)
-        }
+        } else throw RestException("Введите все данные")
     }
 
-    @GetMapping("/login")
-    fun loginUser(@RequestParam("login") login: String?,
-                  @RequestParam("password") password: String?
-    ): User = userService.getUser(login, password)
+    @PostMapping("/login")
+    fun loginUser(@RequestBody user: User?): User = userService.getUser(user)
 }

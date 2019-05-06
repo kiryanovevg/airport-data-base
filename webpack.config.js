@@ -4,15 +4,14 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 module.exports = {
     mode: 'development',
     devtool: 'source-map',
-    entry: path.join(__dirname, 'src', 'main', 'resources', 'static', 'js', 'main.js'),
+    entry: path.join(__dirname, 'src', 'main', 'resources', 'static', 'js', 'index.js'),
     devServer: {
         contentBase: './dist',
         compress: true,
-        host: '192.168.1.7',
+        // host: 'localhost',
         port: 8081,
         allowedHosts: [
-            'localhost:8080',
-            '192.168.1.9'
+            'localhost:8080'
         ]
     },
     module: {
@@ -30,6 +29,10 @@ module.exports = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
             }
         ]
     },
