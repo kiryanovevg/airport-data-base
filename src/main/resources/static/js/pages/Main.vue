@@ -1,7 +1,7 @@
 <template>
     <div>Hello, this main page!
         <br>
-        <router-link to="/1">11111</router-link>
+        <router-link to="/airlines">Airlines</router-link>
         <br>
         <router-link to="/2">22222</router-link>
     </div>

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.context.request.WebRequest
 
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @RestController
 class UserController {
 

@@ -3,7 +3,12 @@
         <button
                 v-if="profile"
                 @click="logout">
-            1231
+            Logout
+        </button>
+        <button
+                v-if="profile && $route.path !== '/'"
+                @click="navigateToMainPage">
+            MainPage
         </button>
         <router-view
                 @authenticate="authenticate"
@@ -16,7 +21,7 @@
         data() {
             return {
                 msg: 'MESSAGE',
-                profile: null
+                profile: null,
             }
         },
         created() {
@@ -53,6 +58,9 @@
             logout() {
                 this.clearProfile();
                 this.redirectToLogin();
+            },
+            navigateToMainPage() {
+                this.$router.push('/');
             }
         }
     }
