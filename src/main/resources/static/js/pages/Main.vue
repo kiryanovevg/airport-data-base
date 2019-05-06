@@ -3,7 +3,7 @@
         <br>
         <router-link to="/airlines">Airlines</router-link>
         <br>
-        <router-link to="/2">22222</router-link>
+        <router-link to="/airplanes">Airplanes</router-link>
     </div>
 </template>
 
