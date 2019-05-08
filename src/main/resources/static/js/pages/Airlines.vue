@@ -67,7 +67,7 @@
 </template>
 
 <script>
-    import apiAirlines from "api/airlines.js";
+    import {mapActions, mapState} from "vuex";
 
     export default {
         name: "Airlines",
@@ -79,43 +79,41 @@
                 loading: false,
                 message: null,
                 selected: null,
-                airlines: []
             }
         },
+        computed: {
+            ...mapState({
+                airlines: state => state.airlines.data
+            })
+        },
         created() {
-            this.loadAirlines()
+            const self = this;
+
+            self.updateAirlinesAction((loading, msg) => {
+                self.message = msg;
+                self.loading = loading;
+            })
         },
         methods: {
+            ...mapActions(['updateAirlinesAction', 'addAirlineAction', 'removeAirlineAction']),
             selectAirline(index) {
                 this.selected = this.airlines[index]
             },
 
-            deleteAirline: function(selected) {
+            deleteAirline(selected) {
                 const self = this;
 
-                self.loading = true;
                 self.selected = null;
-                self.message = null;
-
-                const index = self.airlines.indexOf(selected);
-                if (index > -1) {
-                    self.airlines.splice(index, 1);
-                }
-
-                apiAirlines.deleteAirline(selected.id).then(
-                    response => {
-                        self.loading = false;
-                        self.message = 'Successful deleted';
-                    },
-
-                    error => {
-                        self.loading = false;
-                        self.message = error.bodyText;
+                self.removeAirlineAction({
+                    id: selected.id,
+                    ui(loading, msg) {
+                        self.loading = loading;
+                        self.message = msg;
                     }
-                );
+                });
             },
 
-            addAirline: function () {
+            addAirline() {
                 const self = this;
 
                 if (!self.input.airlineName) {
@@ -123,41 +121,16 @@
                 }
 
                 self.selected = null;
-                self.message = null;
-                self.loading = true;
-
-                apiAirlines.addAirline(self.input.airlineName).then(
-                    response => {
-                        self.loading = false;
+                self.addAirlineAction({
+                    name: self.input.airlineName,
+                    ui(loading, msg) {
+                        self.message = msg;
+                        self.loading = loading;
+                    },
+                    success() {
                         self.input.airlineName = null;
-
-                        self.airlines.push(response.body);
-                        self.message = 'Successful added: ' + response.body.id;
-                    },
-
-                    error => {
-                        self.loading = false;
-                        self.message = error.bodyText;
                     }
-                );
-            },
-
-            loadAirlines: function() {
-                const self = this;
-                self.loading = true;
-
-                apiAirlines.loadAirlines().then(
-                    success => {
-                        self.loading = false;
-                        self.airlines = success.body;
-                    },
-
-                    error => {
-                        alert(error);
-                        self.loading = false;
-                        self.message = error.bodyText;
-                    }
-                );
+                });
             }
         }
     }

@@ -24,13 +24,19 @@
                 profile: null,
             }
         },
+        watch: {
+            $route(newRoute, oldRoute) {
+                // console.log(newRoute.path + ' -> ' + oldRoute.path);
+                if (!this.profile) this.redirectToLogin();
+            }
+        },
         created() {
             this.loadProfile();
-            if (!this.profile) this.redirectToLogin()
+            if (!this.profile) this.redirectToLogin();
         },
         methods: {
             loadProfile() {
-                if (typeof localStorage.profile !== 'undefined') {
+                if (localStorage.profile !== undefined) {
                     const json = JSON.parse(localStorage.profile);
                     if (json.login) this.profile = json
                 }

@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from "./pages/Login.vue";
-import Main from "./pages/Main.vue";
-import Airlines from "./pages/Airlines.vue";
-import Error from "./components/Error.vue";
-import Airplanes from "./pages/Airplanes.vue";
+import Login from "../pages/Login.vue";
+import Main from "../pages/Main.vue";
+import Airlines from "../pages/Airlines.vue";
+import Error from "../components/Error.vue";
+import Airplanes from "../pages/Airplanes.vue";
 
 Vue.use(VueRouter);
 

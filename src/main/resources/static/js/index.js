@@ -1,12 +1,16 @@
 import Vue from "vue";
-import 'api/resource'
+import 'util/resource'
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import router from "./router.js";
+import store from "util/store.js";
+import router from "util/router.js";
 import App from "./App.vue";
+
+var airlines = [];
 
 new Vue({
     el: '#app',
+    store,
     router,
     render: a => a(App)
 });
