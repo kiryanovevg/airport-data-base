@@ -1,5 +1,5 @@
 <template>
-    <div class="container pt-5">
+    <div class="container pt-4 pb-4">
         <div class="row">
             <div class="col">
                 <h1>Airplanes</h1>
@@ -49,13 +49,16 @@
                         <div class="input-group-prepend">
                             <label class="input-group-text" for="inputGroupAirline">Airline</label>
                         </div>
-                        <select class="custom-select" id="inputGroupAirline" v-model="selected.airlineName">
+                        <select class="custom-select" id="inputGroupAirline"
+                                v-model="selected.airline"
+                        >
                             <option
                                     v-for="(airline, index) in airlines"
+                                    v-bind:value="airline"
                             >{{ airline.name }}</option>
                         </select>
                     </div>
-                    <span>Выбрано: {{ getAirlineFromName(selected.airlineName) }}</span>
+                    <span>Выбрано: {{ selected.airline }}</span>
 
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-secondary mr-1" v-on:click="clearAddField">Clear</button>
@@ -102,6 +105,8 @@
 </template>
 
 <script>
+    import {mapActions, mapState} from "vuex";
+
     export default {
         name: "Airplanes",
         data() {
@@ -111,163 +116,51 @@
                     capacity: null,
                 },
                 selected: {
-                    airlineName: null,
-                    airplane: null
+                    airline: null,
+                    airplane: null,
+                    r: null,
                 },
                 loading: {
                     add: false,
                     content: false
                 },
-                message: null,
-                airlines: [],
-                airplanes: []
+                message: null
             }
+        },
+        computed: {
+            ...mapState({
+                airlines: state => state.airlines.data,
+                airplanes: state => state.airplanes.data
+            }),
         },
         created() {
             this.loadAirplanes();
             this.loadAirlines();
         },
         methods: {
+            ...mapActions({
+                getAirlines: 'airlines/getAction',
+                getAirplanes: 'airplanes/getAction',
+                createAirplane: 'airplanes/addAction',
+                removeAirplane: 'airplanes/removeAction',
+            }),
+
+            select(s) {
+              alert(s)
+            },
+
             clearAddField: function () {
                 this.input.model = null;
                 this.input.capacity = null;
-                this.input.selectedAirlineName = null;
+                this.selected.airline = null;
             },
 
             selectAirplane: function(index) {
-                this.input.selectedAirplane = this.airplanes[index]
-            },
-
-            addAirplane: function () {
-                var self = this;
-
-                if (self.input.model
-                    && self.input.capacity
-                    && self.input.selectedAirlineName) {
-
-                    var airline = self.getAirlineFromName(
-                        self.input.selectedAirlineName
-                    );
-
-                    if (airline) {
-                        var body = JSON.stringify({
-                            model: self.input.model,
-                            capacity: self.input.capacity,
-                            airlineId: airline.id
-                        });
-
-                        self.input.model = null;
-                        self.input.capacity = null;
-                        self.input.selectedAirlineName = null;
-
-                        self.message = null;
-                        self.loading.content = true;
-                        // self.loading.add = true;
-
-                        $.ajax({
-                            url: "/airplanes",
-                            type: "POST",
-                            contentType:"application/json",
-                            data: body,
-                            success: function(response) {
-                                // self.loadAirlines();
-                                self.loading.content = false;
-                                self.airplanes.push(response);
-                                self.message = 'Successful added';
-                            },
-                            error: function(xhr) {
-                                self.loading.content = false;
-                                // self.loading.add = false;
-                                self.message = xhr.responseText;
-                            }
-                        });
-                    } else {
-                        self.message = "Произошла ошибка при выборе!"
-                    }
-                } else {
-                    self.message = "Заполните все поля!"
-                }
-            },
-
-            loadAirplanes: function () {
-                var self = this;
-                self.loading.content = true;
-
-                $.ajax({
-                    url: "/airplanes",
-                    type: "GET",
-                    success: function(response) {
-                        self.loading.content = false;
-                        self.airplanes = response;
-                    },
-                    error: function(xhr) {
-                        self.loading.content = false;
-                        self.message = xhr.responseText;
-                    }
-                });
-            },
-
-            deleteAirplane: function() {
-                var self = this;
-                var selected = self.input.selectedAirplane;
-
-                self.loading.content = true;
-                self.input.selectedAirplane = null;
-                self.message = null;
-
-                var index = self.airplanes.indexOf(selected);
-                if (index > -1) {
-                    self.airplanes.splice(index, 1);
-                }
-
-                $.ajax({
-                    url: "/airplanes/" + selected.id,
-                    type: "DELETE",
-                    success: function(response) {
-                        self.loading.content = false;
-                        self.message = "Successful removed!"
-                    },
-                    error: function(xhr) {
-                        self.loading.content = false;
-                        self.message = xhr.responseText;
-                    }
-                });
-            },
-
-            loadAirlines: function() {
-                var self = this;
-                self.loading.add = true;
-
-                $.ajax({
-                    url: "/airlines",
-                    type: "GET",
-                    success: function(response) {
-                        self.loading.add = false;
-                        self.airlines = response;
-                    },
-                    error: function(xhr) {
-                        self.loading.add = false;
-                        self.message = xhr.responseText;
-                    }
-                });
-            },
-
-            getAirlineFromName: function (name) {
-                var val = null;
-
-                if (name) {
-                    this.airlines.forEach(function (value) {
-                        if (value.name === name) {
-                            val = value;
-                        }
-                    });
-                }
-
-                return val;
+                this.selected.airplane = this.airplanes[index]
             },
 
             getAirlineFromId: function (id) {
-                var result = null;
+                let result = null;
 
                 if (id) {
                     this.airlines.forEach(function (value) {
@@ -278,7 +171,68 @@
                 }
 
                 return result;
-            }
+            },
+
+            loadAirlines: function() {
+                const self = this;
+                self.getAirlines((loading, msg) => {
+                    if (msg != null) self.message = msg;
+                    self.loading.add = loading;
+                });
+            },
+
+            loadAirplanes: function () {
+                const self = this;
+                self.getAirplanes((loading, msg) => {
+                    if (msg != null) self.message = msg;
+                    self.loading.content = loading;
+                });
+            },
+
+            addAirplane: function () {
+                const self = this;
+
+                if (!self.input.model
+                    || !self.input.capacity
+                    || !self.selected.airline) {
+                    self.message = "Заполните все поля!";
+                    return;
+                }
+
+                alert(self.selected.airline);
+
+                self.createAirplane({
+                    data: {
+                        model: self.input.model,
+                        capacity: self.input.capacity,
+                        airlineId: self.selected.airline.id
+                    },
+                    ui(loading, msg) {
+                        self.loading.add = loading;
+                        self.message = msg;
+                    },
+                    success() {
+                        self.input.model = null;
+                        self.input.capacity = null;
+                        self.selected.airline = null;
+                        self.loadAirlines()
+                    }
+                });
+            },
+
+            deleteAirplane: function() {
+                const self = this;
+                const selected = self.selected.airplane;
+
+                self.selected.airplane = null;
+                self.removeAirplane({
+                    id: selected.id,
+                    ui(loading, msg) {
+                        self.loading.content = loading;
+                        self.message = msg;
+                    }
+                });
+            },
         }
     }
 </script>

@@ -88,14 +88,17 @@
         },
         created() {
             const self = this;
-
-            self.updateAirlinesAction((loading, msg) => {
+            self.get((loading, msg) => {
                 self.message = msg;
                 self.loading = loading;
             })
         },
         methods: {
-            ...mapActions(['updateAirlinesAction', 'addAirlineAction', 'removeAirlineAction']),
+            ...mapActions({
+                get: 'airlines/getAction',
+                add: 'airlines/addAction',
+                remove: 'airlines/removeAction',
+            }),
             selectAirline(index) {
                 this.selected = this.airlines[index]
             },
@@ -104,7 +107,7 @@
                 const self = this;
 
                 self.selected = null;
-                self.removeAirlineAction({
+                self.remove({
                     id: selected.id,
                     ui(loading, msg) {
                         self.loading = loading;
@@ -121,8 +124,10 @@
                 }
 
                 self.selected = null;
-                self.addAirlineAction({
-                    name: self.input.airlineName,
+                self.add({
+                    data: {
+                        name: self.input.airlineName
+                    },
                     ui(loading, msg) {
                         self.message = msg;
                         self.loading = loading;
