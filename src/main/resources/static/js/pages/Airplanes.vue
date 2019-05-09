@@ -175,17 +175,21 @@
 
             loadAirlines: function() {
                 const self = this;
-                self.getAirlines((loading, msg) => {
-                    if (msg != null) self.message = msg;
-                    self.loading.add = loading;
+                self.getAirlines({
+                    ui(loading, msg) {
+                        if (msg != null) self.message = msg;
+                        self.loading.add = loading;
+                    }
                 });
             },
 
             loadAirplanes: function () {
                 const self = this;
-                self.getAirplanes((loading, msg) => {
-                    if (msg != null) self.message = msg;
-                    self.loading.content = loading;
+                self.getAirplanes({
+                    ui(loading, msg) {
+                        if (msg != null) self.message = msg;
+                        self.loading.content = loading;
+                    }
                 });
             },
 

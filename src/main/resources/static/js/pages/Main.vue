@@ -1,23 +1,22 @@
 <template>
     <div class="container pt-5 pb-5">
 
-        <div>
-            <br>
-            <br>
-
-            <router-link class="box btn card text-center bg-light"
-                         style="max-width: 18rem;"
-                         v-for="(link, index) in links"
-                         :to="link.path"
-                         :class="{ 'mr-3': (index !== links.length - 1)}"
+        <div class="row">
+            <div class="col-md-auto mt-2 d-flex justify-content-center"
+                 v-for="(link, index) in links"
             >
-                <div class="card-body">
-                    <p class="card-text">
-                        {{ link.name }}
-                    </p>
-                </div>
-            </router-link>
-
+                <router-link class="box btn card text-center bg-light"
+                             style="max-width: 18rem;"
+                             :to="link.path"
+                             :class="{ 'mr-3': (index !== links.length - 1)}"
+                >
+                    <div class="card-body">
+                        <p class="card-text">
+                            {{ link.name }}
+                        </p>
+                    </div>
+                </router-link>
+            </div>
         </div>
     </div>
 </template>
@@ -31,6 +30,7 @@
                     {name: 'Airlines', path: '/airlines'},
                     {name: 'Airplanes', path: '/airplanes'},
                     {name: 'Directions', path: '/directions'},
+                    {name: 'Schedule', path: '/schedule'},
                 ]
             }
         }

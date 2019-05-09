@@ -9,6 +9,7 @@ export default new Vuex.Store({
         airplanes: Store(Vue.resource('/api/airplanes{/id}')),
         directions: Store(Vue.resource('/api/directions{/id}')),
         cities: Store(Vue.resource('/api/directions/cities{/id}')),
+        schedule: Store(Vue.resource('/api/schedule{/id}')),
     }
 })
 
@@ -47,13 +48,15 @@ function Store(api) {
         },
 
         actions: {
-            getAction({ commit, state }, ui) {
+            getAction({ commit, state }, {ui, transformData}) {
                 if (ui !== undefined) {
                     ui(true, null);
 
                     api.get().then(
                         response => {
-                            commit('setMutation', response.body);
+                            let data = response.body;
+                            if (transformData !== undefined) data = transformData(data);
+                            commit('setMutation', data);
                             ui(false, null);
                         },
 
@@ -64,14 +67,16 @@ function Store(api) {
                 } else throw 'Not setted ui callback';
             },
 
-            addAction({ commit, state }, { data, ui, complete }) {
+            addAction({ commit, state }, { data, transformData, ui, complete }) {
                 if (ui !== undefined) {
                     ui(true, null);
 
                     api.save({}, data).then(
                         response => {
-                            commit('addMutation', response.body);
-                            ui(false, 'Successful added: ' + response.body.id);
+                            let data = response.body;
+                            if (transformData !== undefined) data = transformData(data);
+                            commit('addMutation', data);
+                            ui(false, 'Successful added: ' + data.id);
                             if (complete !== undefined) complete();
                         },
 

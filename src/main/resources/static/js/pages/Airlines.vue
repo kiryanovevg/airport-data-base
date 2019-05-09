@@ -87,11 +87,7 @@
             })
         },
         created() {
-            const self = this;
-            self.get((loading, msg) => {
-                self.message = msg;
-                self.loading = loading;
-            })
+            this.loadAirlines();
         },
         methods: {
             ...mapActions({
@@ -103,6 +99,15 @@
                 this.selected = this.airlines[index]
             },
 
+            loadAirlines() {
+                const self = this;
+                self.get({
+                    ui(loading, msg) {
+                        if (msg != null) self.message = msg;
+                        self.loading = loading;
+                    }
+                })
+            },
             deleteAirline(selected) {
                 const self = this;
 

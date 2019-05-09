@@ -218,17 +218,21 @@
 
             loadCities: function () {
                 const self = this;
-                self.getCities((loading, msg) => {
-                    if (msg != null) self.message = msg;
-                    self.loading.city = loading;
+                self.getCities({
+                    ui(loading, msg) {
+                        if (msg != null) self.message = msg;
+                        self.loading.city = loading;
+                    }
                 });
             },
 
             loadDirections: function () {
                 const self = this;
-                self.getDirections((loading, msg) => {
-                    if (msg != null) self.message = msg;
-                    self.loading.direction = loading;
+                self.getDirections({
+                    ui(loading, msg) {
+                        if (msg != null) self.message = msg;
+                        self.loading.direction = loading;
+                    }
                 });
             },
 
