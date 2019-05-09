@@ -1,5 +1,5 @@
 <template>
-    <div class="container pt-5 pb-5">
+    <div class="container pt-4 pb-4">
         <div class="row">
             <div class="col">
                 <h1>Airlines</h1>
@@ -132,7 +132,7 @@
                         self.message = msg;
                         self.loading = loading;
                     },
-                    success() {
+                    complete() {
                         self.input.airlineName = null;
                     }
                 });

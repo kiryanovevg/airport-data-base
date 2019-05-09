@@ -199,8 +199,6 @@
                     return;
                 }
 
-                alert(self.selected.airline);
-
                 self.createAirplane({
                     data: {
                         model: self.input.model,
@@ -211,7 +209,7 @@
                         self.loading.add = loading;
                         self.message = msg;
                     },
-                    success() {
+                    complete() {
                         self.input.model = null;
                         self.input.capacity = null;
                         self.selected.airline = null;

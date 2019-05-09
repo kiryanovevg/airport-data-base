@@ -27,14 +27,18 @@
         watch: {
             $route(newRoute, oldRoute) {
                 // console.log(newRoute.path + ' -> ' + oldRoute.path);
-                if (!this.profile) this.redirectToLogin();
+                this.handlePath();
             }
         },
         created() {
             this.loadProfile();
-            if (!this.profile) this.redirectToLogin();
+            this.handlePath();
         },
         methods: {
+            handlePath() {
+                if (!this.profile) this.redirectToLogin();
+                else if (this.$route.path === '/login') this.redirectToMainPage();
+            },
             loadProfile() {
                 if (localStorage.profile !== undefined) {
                     const json = JSON.parse(localStorage.profile);
@@ -54,9 +58,6 @@
                 localStorage.removeItem('profile');
             },
 
-            redirectToLogin() {
-                this.$router.replace('login');
-            },
             authenticate(login) {
                 this.saveProfile(login);
                 this.$router.replace('/');
@@ -65,9 +66,15 @@
                 this.clearProfile();
                 this.redirectToLogin();
             },
+            redirectToLogin() {
+                this.$router.replace('/login');
+            },
+            redirectToMainPage() {
+                this.$router.replace('/');
+            },
             navigateToMainPage() {
                 this.$router.push('/');
-            }
+            },
         }
     }
 </script>

@@ -6,7 +6,9 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         airlines: Store(Vue.resource('/api/airlines{/id}')),
-        airplanes: Store(Vue.resource('/api/airplanes{/id}'))
+        airplanes: Store(Vue.resource('/api/airplanes{/id}')),
+        directions: Store(Vue.resource('/api/directions{/id}')),
+        cities: Store(Vue.resource('/api/directions/cities{/id}')),
     }
 })
 
@@ -22,7 +24,7 @@ function Store(api) {
         },
 
         mutations: {
-            getMutation(state, data) {
+            setMutation(state, data) {
                 state.data = data;
             },
 
@@ -51,7 +53,7 @@ function Store(api) {
 
                     api.get().then(
                         response => {
-                            commit('getMutation', response.body);
+                            commit('setMutation', response.body);
                             ui(false, null);
                         },
 
@@ -62,7 +64,7 @@ function Store(api) {
                 } else throw 'Not setted ui callback';
             },
 
-            addAction({ commit, state }, { data, ui, success }) {
+            addAction({ commit, state }, { data, ui, complete }) {
                 if (ui !== undefined) {
                     ui(true, null);
 
@@ -70,7 +72,7 @@ function Store(api) {
                         response => {
                             commit('addMutation', response.body);
                             ui(false, 'Successful added: ' + response.body.id);
-                            if (success !== undefined) success();
+                            if (complete !== undefined) complete();
                         },
 
                         error => {
@@ -80,7 +82,7 @@ function Store(api) {
                 } else throw 'Not setted ui callback';
             },
 
-            removeAction({ commit, state}, { id, ui }) {
+            removeAction({ commit, state}, { id, ui, complete }) {
                 if (ui !== undefined) {
                     ui(true, null);
 
@@ -88,6 +90,7 @@ function Store(api) {
                     api.delete({id: id}).then(
                         response => {
                             ui(false, response.bodyText);
+                            if (complete !== undefined) complete();
                         },
 
                         error => {

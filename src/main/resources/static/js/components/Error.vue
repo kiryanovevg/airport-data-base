@@ -1,5 +1,5 @@
 <template>
-    <div>MAPPING ERROR</div>
+    <h1>MAPPING ERROR</h1>
 </template>
 
 <script>
