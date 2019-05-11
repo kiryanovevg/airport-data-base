@@ -7,6 +7,7 @@ import Error from "../components/Error.vue";
 import Airplanes from "../pages/Airplanes.vue";
 import Directions from "../pages/Directions.vue";
 import Schedule from "../pages/Schedule.vue";
+import Flights from "../pages/Flights.vue";
 
 Vue.use(VueRouter);
 
@@ -16,6 +17,7 @@ const routes = [
     {path: '/airplanes', component: Airplanes},
     {path: '/directions', component: Directions},
     {path: '/schedule', component: Schedule},
+    {path: '/flights', component: Flights},
     {path: '/', component: Main},
     {path: '*', component: Error}
 ];

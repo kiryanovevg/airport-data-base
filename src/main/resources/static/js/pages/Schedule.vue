@@ -8,13 +8,7 @@
 
         <hr>
 
-        <div
-                class="alert alert-secondary"
-                role="alert"
-                v-if="message"
-        >
-            Message: {{ message }}
-        </div>
+        <app-message :message="message"/>
 
         <div class="row">
             <div class="col">
@@ -45,6 +39,7 @@
                     </div>
                     <div class="col-md-auto">
                         <button type="button" class="btn btn-outline-primary" v-on:click="setCurrentDate">Текущее время</button>
+                        <button type="button" class="btn btn-outline-primary" v-on:click="setCurrentDatePlusDay">Текущее время + день</button>
                     </div>
                 </div>
 
@@ -112,6 +107,7 @@
 
 <script>
     import {mapActions, mapState} from "vuex";
+    import {parseSchedule} from "../util/store.js";
 
     export default {
         name: "Schedule",
@@ -165,6 +161,15 @@
                 this.input.date.minute = date.getMinutes();
             },
 
+            setCurrentDatePlusDay: function () {
+                const date = new Date();
+                this.input.date.day = date.getDate() + 1;
+                this.input.date.month = date.getMonth() + 1;
+                this.input.date.year = date.getFullYear();
+                this.input.date.hour = date.getHours();
+                this.input.date.minute = date.getMinutes();
+            },
+
             clearInputFields: function () {
                 this.input.date.day = null;
                 this.input.date.month = null;
@@ -208,12 +213,6 @@
                 this.setDate(date => this.selected.arrivalDate = date);
             },
 
-            parseSchedule: function (item) {
-                item.departure = new Date(Date.parse(item.departure));
-                item.arrival = new Date(Date.parse(item.arrival));
-                return item;
-            },
-
             loadSchedules: function () {
                 const self = this;
 
@@ -224,7 +223,7 @@
                     },
                     transformData(data) {
                         return data.map((value, index, array) => {
-                            return self.parseSchedule(value);
+                            return parseSchedule(value);
                         })
                     },
                 });
@@ -246,7 +245,7 @@
                         arrival: self.selected.arrivalDate
                     },
                     transformData(data) {
-                        return self.parseSchedule(data);
+                        return parseSchedule(data);
                         // return data;
                     },
                     ui(loading, msg) {

@@ -10,13 +10,7 @@
 
         <div class="row">
             <div class="col-md-4">
-                <div
-                        class="alert alert-secondary"
-                        role="alert"
-                        v-if="message"
-                >
-                    Message: {{ message }}
-                </div>
+                <app-message :message="message"/>
 
                 <div class="spinner-border" role="status"
                      v-if="loading.content"
@@ -118,7 +112,6 @@
                 selected: {
                     airline: null,
                     airplane: null,
-                    r: null,
                 },
                 loading: {
                     add: false,

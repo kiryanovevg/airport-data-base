@@ -5,10 +5,10 @@
             <div class="col-md-auto mt-2 d-flex justify-content-center"
                  v-for="(link, index) in links"
             >
+<!--                :class="{ 'mr-3': (index !== links.length - 1)}"-->
                 <router-link class="box btn card text-center bg-light"
                              style="max-width: 18rem;"
                              :to="link.path"
-                             :class="{ 'mr-3': (index !== links.length - 1)}"
                 >
                     <div class="card-body">
                         <p class="card-text">
@@ -31,6 +31,7 @@
                     {name: 'Airplanes', path: '/airplanes'},
                     {name: 'Directions', path: '/directions'},
                     {name: 'Schedule', path: '/schedule'},
+                    {name: 'Flights', path: '/flights'},
                 ]
             }
         }

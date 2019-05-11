@@ -10,6 +10,9 @@
                 @click="navigateToMainPage">
             MainPage
         </button>
+
+<!--        <app-nav-bar/>-->
+
         <router-view
                 @authenticate="authenticate"
         ></router-view>
@@ -17,12 +20,17 @@
 </template>
 
 <script>
+    import NavBar from "./components/NavBar.vue";
+
     export default {
         data() {
             return {
                 msg: 'MESSAGE',
                 profile: null,
             }
+        },
+        components: {
+            'app-nav-bar': NavBar,
         },
         watch: {
             $route(newRoute, oldRoute) {

@@ -8,13 +8,7 @@
 
         <hr>
 
-        <div
-                class="alert alert-secondary"
-                role="alert"
-                v-if="message"
-        >
-            Message: {{ message }}
-        </div>
+        <app-message :message="message"/>
 
         <div class="row">
             <div class="col-md-4">

@@ -10,6 +10,7 @@ export default new Vuex.Store({
         directions: Store(Vue.resource('/api/directions{/id}')),
         cities: Store(Vue.resource('/api/directions/cities{/id}')),
         schedule: Store(Vue.resource('/api/schedule{/id}')),
+        flights: Store(Vue.resource('/api/flights{/id}')),
     }
 })
 
@@ -106,4 +107,10 @@ function Store(api) {
             }
         }
     }
+}
+
+export function parseSchedule (item) {
+    item.departure = new Date(Date.parse(item.departure));
+    item.arrival = new Date(Date.parse(item.arrival));
+    return item;
 }

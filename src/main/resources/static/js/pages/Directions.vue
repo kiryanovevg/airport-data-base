@@ -11,13 +11,7 @@
         <div class="row">
             <div class="col-md-4">
 
-                <div
-                        class="alert alert-secondary"
-                        role="alert"
-                        v-if="message"
-                >
-                    Message: {{ message }}
-                </div>
+                <app-message :message="message"/>
 
                 <div id="addCity" v-if="!loading.add">
                     <div class="d-flex justify-content-between">

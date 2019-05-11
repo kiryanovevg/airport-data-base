@@ -16,7 +16,7 @@ data class Schedule(
         @Column(nullable = false)
         val arrival: Date,
 
-        @OneToOne(mappedBy = "schedule", fetch = FetchType.EAGER)
+        @OneToOne(mappedBy = "schedule", fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
         val flight: Flight? = null,
 
         @Id
@@ -34,4 +34,13 @@ data class Schedule(
         fun getDTO() = DTO(
                 id, departure, arrival
         )
+
+        /*fun getDTO() = HashMap<String, String>().apply {
+                putAll(mapOf(
+                        "id" to id.toString(),
+                        "departure" to departure.toString(),
+                        "arrival" to arrival.toString()
+                ))
+                if (flight != null) put("flight", flight.id.toString())
+        }*/
 }
