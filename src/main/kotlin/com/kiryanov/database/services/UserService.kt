@@ -13,25 +13,20 @@ class UserService {
 
     fun findAll(): List<User> = userRepository.findAll()
 
-    fun addUser(login: String, password: String) = userRepository
-            .save(User(login, password, false))
+    fun addUser(login: String, password: String, adminPermission: Boolean) = userRepository
+            .save(User(login, password, adminPermission))
 
-    fun getUser(login: String?, password: String?): User {
-
-        if (login?.isNotEmpty() == true && password?.isNotEmpty() == true) {
-            val user = userRepository.findByLogin(login)
-
-            if (user != null) {
-                if (user.password == password) {
-                     return user
-                } else {
-                    throw RestException("Неверный пароль")
-                }
-            } else {
-                throw RestException("Пользователь не найден")
-            }
-        } else {
-            throw RestException("Введите данные")
-        }
+    fun getUser(user: User?): User {
+        if (user != null) {
+            if (user.login.isNotEmpty() && user.password.isNotEmpty()) {
+                val findUser = userRepository.findAll().find { user.login == it.login }
+//                val findUser = userRepository.findByLogin(user.login)
+                if (findUser != null) {
+                    if (findUser.password == user.password) {
+                        return findUser
+                    } else throw RestException("Неверный пароль")
+                } else throw RestException("Пользователь не найден")
+            } else throw RestException("Введите данные")
+        } else throw RestException("Введите данные")
     }
 }
