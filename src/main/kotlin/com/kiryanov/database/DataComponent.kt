@@ -12,13 +12,15 @@ class DataComponent @Autowired constructor(
         private val airplaneRepository: AirplaneRepository,
         private val directionRepository: DirectionRepository,
         private val cityRepository: CityRepository,
-        private val scheduleRepository: ScheduleRepository) {
+        private val scheduleRepository: ScheduleRepository,
+        private val flightRepository: FlightRepository) {
 
     init {
         initAirlines()
         initAirplanes()
         initDirections()
         initSchedules()
+        initFlights()
     }
 
     private fun initAirlines() {
@@ -57,6 +59,32 @@ class DataComponent @Autowired constructor(
         scheduleRepository.save(Schedule(
                 Calendar.getInstance().let { calendar -> calendar.set(10, 6, 2019, 20, 40); calendar.time },
                 Calendar.getInstance().let { calendar -> calendar.set(10, 6, 2019, 20, 40); calendar.time }
+        ))
+    }
+
+    private fun initFlights() {
+        flightRepository.save(Flight(
+                1000,
+                scheduleRepository.getOne(1),
+                directionRepository.getOne(1),
+                airplaneRepository.getOne(3),
+                emptyList()
+        ))
+
+        flightRepository.save(Flight(
+                2000,
+                scheduleRepository.getOne(2),
+                directionRepository.getOne(2),
+                airplaneRepository.getOne(3),
+                emptyList()
+        ))
+
+        flightRepository.save(Flight(
+                300,
+                scheduleRepository.getOne(3),
+                directionRepository.getOne(3),
+                airplaneRepository.getOne(1),
+                emptyList()
         ))
     }
 }

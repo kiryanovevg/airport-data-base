@@ -11,6 +11,8 @@ export default new Vuex.Store({
         cities: Store(Vue.resource('/api/directions/cities{/id}')),
         schedule: Store(Vue.resource('/api/schedule{/id}')),
         flights: Store(Vue.resource('/api/flights{/id}')),
+        places: Store(Vue.resource('/api/flights{/id}/places')),
+        tickets: Store(Vue.resource('/api/tickets{/id}')),
     }
 })
 
@@ -49,11 +51,12 @@ function Store(api) {
         },
 
         actions: {
-            getAction({ commit, state }, {ui, transformData}) {
+            getAction({ commit, state }, {ui, transformData, params}) {
                 if (ui !== undefined) {
                     ui(true, null);
 
-                    api.get().then(
+                    if (params === undefined) params = {};
+                    api.get(params).then(
                         response => {
                             let data = response.body;
                             if (transformData !== undefined) data = transformData(data);

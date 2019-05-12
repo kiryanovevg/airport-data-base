@@ -8,6 +8,7 @@ import Airplanes from "../pages/Airplanes.vue";
 import Directions from "../pages/Directions.vue";
 import Schedule from "../pages/Schedule.vue";
 import Flights from "../pages/Flights.vue";
+import Tickets from "../pages/Tickets.vue";
 
 Vue.use(VueRouter);
 
@@ -18,6 +19,7 @@ const routes = [
     {path: '/directions', component: Directions},
     {path: '/schedule', component: Schedule},
     {path: '/flights', component: Flights},
+    {path: '/tickets', component: Tickets},
     {path: '/', component: Main},
     {path: '*', component: Error}
 ];

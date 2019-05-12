@@ -14,9 +14,19 @@ class FlightController {
     private lateinit var flightService: FlightService
 
     @GetMapping
-    fun getAllFlight(): List<Flight.DTO> {
-        return flightService.getAll()
-                .map { it.getDTO() }
+    fun getAllFlight(
+            @RequestParam(value = "free_places", defaultValue = "false") emptyPlaces: Boolean
+    ): List<Flight.DTO> {
+        return if (emptyPlaces) {
+            flightService.getFlightWithEmptyPlaces().map { it.getDTO() }
+        } else {
+            flightService.getAll().map { it.getDTO() }
+        }
+    }
+
+    @GetMapping("/{id}/places")
+    fun getFreePlaces(@PathVariable("id") id: Long): List<Int> {
+        return flightService.getFreePlaces(id)
     }
 
     @PostMapping

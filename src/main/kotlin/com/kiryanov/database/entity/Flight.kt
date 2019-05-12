@@ -24,7 +24,7 @@ data class Flight(
         val airplane: Airplane,
 
         @OneToMany(mappedBy = "flight", fetch = FetchType.EAGER)
-        val tickets: List<Ticket>? = null,
+        val tickets: List<Ticket>,
 
         @Id
         @GeneratedValue(generator = "increment")

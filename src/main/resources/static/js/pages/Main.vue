@@ -32,6 +32,7 @@
                     {name: 'Directions', path: '/directions'},
                     {name: 'Schedule', path: '/schedule'},
                     {name: 'Flights', path: '/flights'},
+                    {name: 'Tickets', path: '/tickets'},
                 ]
             }
         }

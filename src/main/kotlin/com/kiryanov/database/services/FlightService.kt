@@ -2,7 +2,6 @@ package com.kiryanov.database.services
 
 import com.kiryanov.database.controllers.RestException
 import com.kiryanov.database.entity.Flight
-import com.kiryanov.database.entity.Schedule
 import com.kiryanov.database.repositories.AirplaneRepository
 import com.kiryanov.database.repositories.DirectionRepository
 import com.kiryanov.database.repositories.FlightRepository
@@ -25,6 +24,23 @@ class FlightService {
 
     fun getAll(): List<Flight> = flightRepository
             .findAll()
+
+    fun getFlightWithEmptyPlaces(): List<Flight> {
+        return flightRepository.findAll().filter { flight ->
+            val capacity = flight.airplane.capacity
+            val ticketCount = flight.tickets.size
+
+            ticketCount < capacity
+        }
+    }
+
+    fun getFreePlaces(id: Long): List<Int> {
+        val flight = findById(id)
+        val placesList = flight.tickets.map { ticket -> ticket.place }
+        val result = (1..flight.airplane.capacity).toList()
+
+        return result.filter { i: Int -> !placesList.contains(i) }
+    }
 
     fun findById(id: Long): Flight = flightRepository
             .findByIdOrNull(id)
@@ -52,7 +68,7 @@ class FlightService {
                     ?: throw RestException("Schedule id not found!")
 
             if (schedule.flight != null) throw RestException("Schedule already using!")
-            val flight = Flight(dto.price, schedule, direction, airplane)
+            val flight = Flight(dto.price, schedule, direction, airplane, emptyList())
             return flightRepository.save(flight)
         } else throw RestException("Введите данные")
     }

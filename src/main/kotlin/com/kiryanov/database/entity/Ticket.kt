@@ -8,7 +8,7 @@ import javax.persistence.*
 data class Ticket(
 
         @Column(nullable = false)
-        val luggage: String,
+        val luggage: Boolean,
 
         @Column(nullable = false)
         val place: Int,
@@ -18,11 +18,22 @@ data class Ticket(
         val flight: Flight,
 
         @OneToOne(mappedBy = "ticket", fetch = FetchType.EAGER)
-        val passenger: Passenger,
+        val passenger: Passenger? = null,
 
         @Id
         @GeneratedValue(generator = "increment")
         @GenericGenerator(name= "increment", strategy= "increment")
         @Column(nullable = false, updatable = false)
         val id: Long = 0
-)
+) {
+        data class DTO internal constructor(
+                val id: Long = 0,
+                val flight: Long,
+                val luggage: Boolean,
+                val place: Int
+        )
+
+        fun getDTO() = DTO(
+                id, flight.id, luggage, place
+        )
+}
