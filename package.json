@@ -6,7 +6,8 @@
   "author": "Evgeniy Kiryanov <evgeniy.kiryanov@roonyx.team>",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "heroku-postbuild": "webpack -p"
   },
   "dependencies": {
     "bootstrap": "^4.3.1",
