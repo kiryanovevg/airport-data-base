@@ -5,6 +5,11 @@ module.exports = {
     mode: 'development',
     devtool: 'source-map',
     entry: path.join(__dirname, 'src', 'main', 'resources', 'static', 'js', 'index.js'),
+    output: {
+        // path: path.join(__dirname, 'src', 'main', 'resources', 'static'),
+        publicPath: '/',
+        filename: 'main.js'
+    },
     devServer: {
         contentBase: './dist',
         compress: true,
