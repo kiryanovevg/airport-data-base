@@ -8,6 +8,9 @@ import javax.persistence.*
 @Table(name = "flight")
 data class Flight(
 
+        @Column(nullable = false)
+        val price: Int,
+
         @OneToOne
         @JoinColumn(name = "schedule_id")
         val schedule: Schedule,
@@ -31,12 +34,13 @@ data class Flight(
 ) {
         data class DTO internal constructor(
                 val id: Long = 0,
+                val price: Int,
                 val schedule: Long,
                 val direction: Long,
                 val airplane: Long
         )
 
         fun getDTO() = DTO(
-                id, schedule.id, direction.id, airplane.id
+                id, price, schedule.id, direction.id, airplane.id
         )
 }

@@ -15,6 +15,15 @@
 
                 <app-loading :loading="loading.add"/>
                 <div v-if="!loading.add">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Price</span>
+                        </div>
+                        <input type="number" min="1" class="form-control" aria-label="Price" aria-describedby="inputGroup-sizing-sm"
+                               v-model.number="input.price"
+                        >
+                    </div>
+
                     <div class="mb-3">
                         <app-loading :loading="loading.airplanes"/>
                         <div class="input-group"
@@ -95,7 +104,7 @@
                             v-on:click="selectFlight(index)"
                             v-bind:class="{ active: flight === selected.flight }"
                     >
-                        {{index + 1}} - {{ flight }}
+                        {{ listItem(flight) }}
                     </li>
                 </ul>
 
@@ -113,6 +122,8 @@
                     >Delete</button>
                 </div>
 
+                <div>Price: {{ selectedPrice }}</div>
+                <br>
                 <div>Airplane: {{ selectedAirplane }}</div>
                 <br>
                 <div>Direction: {{ selectedDirection }}</div>
@@ -132,6 +143,7 @@
         data() {
             return {
                 input: {
+                    price: null,
                     airplane: null,
                     direction: null,
                     schedule: null,
@@ -189,7 +201,11 @@
                 const arrStr = `${arr.getDate() + 1}-${arr.getMonth()}-${arr.getFullYear()} ${arr.getHours()}:${arr.getMinutes()}`;
 
                 return depStr + ' => ' + arrStr
-            }
+            },
+
+            selectedPrice() {
+                return this.selected.flight.price
+            },
         },
         created() {
             this.loadAirplanes();
@@ -210,11 +226,19 @@
                 removeFlight: 'flights/removeAction',
             }),
 
+            listItem(flight) {
+                const direction = this.getById(this.directions, flight.direction);
+                const fromCity = this.getById(this.cities, direction.fromCityId);
+                const toCity = this.getById(this.cities, direction.toCityId);
+                return fromCity.name + ' => ' + toCity.name + ' | Price: ' + flight.price;
+            },
+
             selectFlight: function(index) {
                 this.selected.flight = this.flights[index];
             },
 
             clearAddField: function () {
+                this.input.price = null;
                 this.input.airplane = null;
                 this.input.direction = null;
                 this.input.schedule = null;
@@ -223,7 +247,8 @@
             addFlight() {
                 const self = this;
 
-                if (!self.input.airplane
+                if (!self.input.price
+                    || !self.input.airplane
                     || !self.input.direction
                     || !self.input.schedule) {
                     self.message = "Заполните все поля!";
@@ -232,6 +257,7 @@
 
                 self.createFlight({
                     data: {
+                        price: self.input.price,
                         airplane: self.input.airplane.id,
                         direction: self.input.direction.id,
                         schedule: self.input.schedule.id,
@@ -241,6 +267,7 @@
                         self.message = msg;
                     },
                     complete() {
+                        self.input.price = null;
                         self.input.airplane = null;
                         self.input.direction = null;
                         self.input.schedule = null;

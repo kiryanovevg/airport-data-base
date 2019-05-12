@@ -59,7 +59,7 @@
                 };
 
                 this.profile = profile;
-                // localStorage.profile = JSON.stringify(profile);
+                localStorage.profile = JSON.stringify(profile);
             },
             clearProfile() {
                 this.profile = null;

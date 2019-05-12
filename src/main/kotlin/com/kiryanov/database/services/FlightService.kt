@@ -32,6 +32,13 @@ class FlightService {
 
     fun addFlight(dto: Flight.DTO?): Flight {
         if (dto != null) {
+            if (dto.price == 0
+                    || dto.airplane == 0L
+                    || dto.direction == 0L
+                    || dto.schedule == 0L)
+                throw RestException("Заполните все данные")
+            if (dto.price < 0) throw RestException("Цена не может быть меньше нуля")
+
             val airplane = airplaneRepository
                     .findByIdOrNull(dto.airplane)
                     ?: throw RestException("Airplane id not found!")
@@ -45,7 +52,7 @@ class FlightService {
                     ?: throw RestException("Schedule id not found!")
 
             if (schedule.flight != null) throw RestException("Schedule already using!")
-            val flight = Flight(schedule, direction, airplane)
+            val flight = Flight(dto.price, schedule, direction, airplane)
             return flightRepository.save(flight)
         } else throw RestException("Введите данные")
     }

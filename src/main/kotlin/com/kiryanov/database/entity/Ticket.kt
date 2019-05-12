@@ -11,9 +11,6 @@ data class Ticket(
         val luggage: String,
 
         @Column(nullable = false)
-        val price: Int,
-
-        @Column(nullable = false)
         val place: Int,
 
         @ManyToOne(optional = false)
