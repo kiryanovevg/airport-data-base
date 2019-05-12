@@ -8,7 +8,7 @@ import javax.persistence.*
 @Table(name = "flight")
 data class Flight(
 
-        @OneToOne(optional = false, cascade = [CascadeType.ALL])
+        @OneToOne
         @JoinColumn(name = "schedule_id")
         val schedule: Schedule,
 
@@ -16,16 +16,27 @@ data class Flight(
         @JoinColumn(name = "direction_id")
         val direction: Direction,
 
-        @OneToOne(optional = false, cascade = [CascadeType.ALL])
-        @JoinColumn(name = "plane_id")
-        val plane: Airplane,
+        @ManyToOne
+        @JoinColumn(name = "airplane_id")
+        val airplane: Airplane,
 
         @OneToMany(mappedBy = "flight", fetch = FetchType.EAGER)
-        val tickets: List<Ticket>,
+        val tickets: List<Ticket>? = null,
 
         @Id
         @GeneratedValue(generator = "increment")
         @GenericGenerator(name= "increment", strategy= "increment")
         @Column(nullable = false, updatable = false)
         val id: Long = 0
-)
+) {
+        data class DTO internal constructor(
+                val id: Long = 0,
+                val schedule: Long,
+                val direction: Long,
+                val airplane: Long
+        )
+
+        fun getDTO() = DTO(
+                id, schedule.id, direction.id, airplane.id
+        )
+}

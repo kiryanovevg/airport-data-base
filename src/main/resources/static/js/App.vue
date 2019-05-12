@@ -3,8 +3,16 @@
         <button
                 v-if="profile"
                 @click="logout">
-            1231
+            Logout
         </button>
+        <button
+                v-if="profile && $route.path !== '/'"
+                @click="navigateToMainPage">
+            MainPage
+        </button>
+
+<!--        <app-nav-bar/>-->
+
         <router-view
                 @authenticate="authenticate"
         ></router-view>
@@ -12,20 +20,35 @@
 </template>
 
 <script>
+    import NavBar from "./components/NavBar.vue";
+
     export default {
         data() {
             return {
                 msg: 'MESSAGE',
-                profile: null
+                profile: null,
+            }
+        },
+        components: {
+            'app-nav-bar': NavBar,
+        },
+        watch: {
+            $route(newRoute, oldRoute) {
+                // console.log(newRoute.path + ' -> ' + oldRoute.path);
+                this.handlePath();
             }
         },
         created() {
             this.loadProfile();
-            if (!this.profile) this.redirectToLogin()
+            this.handlePath();
         },
         methods: {
+            handlePath() {
+                if (!this.profile) this.redirectToLogin();
+                else if (this.$route.path === '/login') this.redirectToMainPage();
+            },
             loadProfile() {
-                if (typeof localStorage.profile !== 'undefined') {
+                if (localStorage.profile !== undefined) {
                     const json = JSON.parse(localStorage.profile);
                     if (json.login) this.profile = json
                 }
@@ -43,9 +66,6 @@
                 localStorage.removeItem('profile');
             },
 
-            redirectToLogin() {
-                this.$router.replace('login');
-            },
             authenticate(login) {
                 this.saveProfile(login);
                 this.$router.replace('/');
@@ -53,7 +73,16 @@
             logout() {
                 this.clearProfile();
                 this.redirectToLogin();
-            }
+            },
+            redirectToLogin() {
+                this.$router.replace('/login');
+            },
+            redirectToMainPage() {
+                this.$router.replace('/');
+            },
+            navigateToMainPage() {
+                this.$router.push('/');
+            },
         }
     }
 </script>

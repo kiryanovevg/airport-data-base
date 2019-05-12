@@ -16,8 +16,8 @@ data class Direction(
         @JoinColumn(name = "to_city_id")
         val toCity: City,
 
-        @OneToMany(mappedBy = "direction", fetch = FetchType.LAZY)
-        val flight: List<Flight>,
+        @OneToMany(mappedBy = "direction", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+        val flight: List<Flight>? = null,
 
         @Id
         @GeneratedValue(generator = "increment")

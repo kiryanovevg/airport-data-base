@@ -1,21 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Schedule</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
-</head>
-<body>
-
-<div id="app">
+<template>
     <div class="container pt-5 pb-5">
         <div class="row">
             <div class="col">
@@ -25,13 +8,7 @@
 
         <hr>
 
-        <div
-                class="alert alert-secondary"
-                role="alert"
-                v-if="message"
-        >
-            Message: {{ message }}
-        </div>
+        <app-message :message="message"/>
 
         <div class="row">
             <div class="col">
@@ -62,6 +39,7 @@
                     </div>
                     <div class="col-md-auto">
                         <button type="button" class="btn btn-outline-primary" v-on:click="setCurrentDate">Текущее время</button>
+                        <button type="button" class="btn btn-outline-primary" v-on:click="setCurrentDatePlusDay">Текущее время + день</button>
                     </div>
                 </div>
 
@@ -125,45 +103,67 @@
             </div>
         </div>
     </div>
-</div>
+</template>
 
-</body>
-</html>
 <script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            input: {
-                date: {
-                    day: null,
-                    month: null,
-                    year: null,
-                    hour: null,
-                    minute: null
-                }
-            },
-            selected: {
-                arrivalDate: null,
-                departureDate: null,
-                schedule: null
-            },
-            loading: {
-                add: false
-            },
-            message: null,
-            schedules: []
+    import {mapActions, mapState} from "vuex";
+    import {parseSchedule} from "../util/store.js";
+
+    export default {
+        name: "Schedule",
+        data() {
+            return {
+                input: {
+                    date: {
+                        day: null,
+                        month: null,
+                        year: null,
+                        hour: null,
+                        minute: null
+                    }
+                },
+                selected: {
+                    arrivalDate: null,
+                    departureDate: null,
+                    schedule: null
+                },
+                loading: {
+                    add: false
+                },
+                message: null,
+            }
         },
-        mounted: function () {
-            this.loadSchedules()
+        computed: {
+            ...mapState({
+                schedules: (state) => state.schedule.data
+            })
+        },
+        created() {
+            this.loadSchedules();
         },
         methods: {
+            ...mapActions({
+                getSchedule: 'schedule/getAction',
+                createSchedule: 'schedule/addAction',
+                removeSchedule: 'schedule/removeAction',
+            }),
+
             selectSchedule: function (index) {
                 this.selected.schedule = this.schedules[index];
             },
 
             setCurrentDate: function () {
-                var date = new Date();
+                const date = new Date();
                 this.input.date.day = date.getDate();
+                this.input.date.month = date.getMonth() + 1;
+                this.input.date.year = date.getFullYear();
+                this.input.date.hour = date.getHours();
+                this.input.date.minute = date.getMinutes();
+            },
+
+            setCurrentDatePlusDay: function () {
+                const date = new Date();
+                this.input.date.day = date.getDate() + 1;
                 this.input.date.month = date.getMonth() + 1;
                 this.input.date.year = date.getFullYear();
                 this.input.date.hour = date.getHours();
@@ -179,137 +179,103 @@
             },
 
             checkInputFields: function () {
-              return this.input.date.year
-                  && this.input.date.month
-                  && this.input.date.day
-                  && this.input.date.hour
-                  && this.input.date.minute
+                return this.input.date.year
+                    && this.input.date.month
+                    && this.input.date.day
+                    && this.input.date.hour
+                    && this.input.date.minute
+            },
+
+            setDate(setter) {
+                if (this.checkInputFields()) {
+                    const date = new Date(
+                        this.input.date.year,
+                        this.input.date.month - 1,
+                        this.input.date.day,
+                        this.input.date.hour,
+                        this.input.date.minute
+                    );
+
+                    setter(date);
+
+                    this.clearInputFields();
+                    this.message = null;
+                } else {
+                    this.message = "Заполните все поля!"
+                }
             },
 
             setDepartureDate: function () {
-                if (this.checkInputFields()) {
-                    this.selected.departureDate = new Date(
-                        this.input.date.year,
-                        this.input.date.month - 1,
-                        this.input.date.day,
-                        this.input.date.hour,
-                        this.input.date.minute
-                    );
-
-                    this.clearInputFields();
-                    this.message = null;
-                } else {
-                    this.message = "Заполните все поля!"
-                }
+                this.setDate(date => this.selected.departureDate = date);
             },
 
             setArrivalDate: function () {
-                if (this.checkInputFields()) {
-                    this.selected.arrivalDate = new Date(
-                        this.input.date.year,
-                        this.input.date.month - 1,
-                        this.input.date.day,
-                        this.input.date.hour,
-                        this.input.date.minute
-                    );
-
-                    this.clearInputFields();
-                    this.message = null;
-                } else {
-                    this.message = "Заполните все поля!"
-                }
+                this.setDate(date => this.selected.arrivalDate = date);
             },
 
             loadSchedules: function () {
-                var self = this;
-                self.loading.add = true;
+                const self = this;
 
-                $.ajax({
-                    url: "/schedule",
-                    type: "GET",
-                    success: function(response) {
-                        self.loading.add = false;
-                        response.forEach(function (item) {
-                            self.schedules.push(self.parseSchedule(item));
-                        });
-
-                        // self.schedules = response;
+                self.getSchedule({
+                    ui(loading, msg) {
+                        if (msg != null) self.message = msg;
+                        self.loading.add = loading;
                     },
-                    error: function(xhr) {
-                        self.loading.add = false;
-                        self.message = xhr.responseText;
-                    }
+                    transformData(data) {
+                        return data.map((value, index, array) => {
+                            return parseSchedule(value);
+                        })
+                    },
                 });
             },
 
             addSchedule: function () {
-                var self = this;
+                const self = this;
 
-                if (self.selected.departureDate && self.selected.arrivalDate) {
-                    var body = JSON.stringify({
+                if (!self.selected.departureDate
+                    || !self.selected.arrivalDate) {
+                    self.message = "Выберите даты!";
+                    return
+                }
+
+                self.selected.schedule = null;
+                self.createSchedule({
+                    data: {
                         departure: self.selected.departureDate,
                         arrival: self.selected.arrivalDate
-                    });
-
-                    self.selected.departureDate = null;
-                    self.selected.arrivalDate = null;
-                    self.selected.schedule = null;
-
-                    self.message = null;
-                    self.loading.add = true;
-
-                    $.ajax({
-                        url: "/schedule",
-                        type: "POST",
-                        contentType:"application/json",
-                        data: body,
-                        success: function(response) {
-                            self.loading.add = false;
-                            self.schedules.push(self.parseSchedule(response));
-                            self.message = 'Successful added';
-                        },
-                        error: function(xhr) {
-                            self.loading.add = false;
-                            self.message = xhr.responseText;
-                        }
-                    });
-                } else {
-                    self.message = "Выберите даты!"
-                }
-            },
-
-            deleteSchedule: function () {
-                var self = this;
-                var selected = self.selected.schedule;
-
-                self.loading.add = true;
-                self.message = null;
-                self.selected.schedule = null;
-
-                var index = self.schedules.indexOf(selected);
-                if (index > -1) {
-                    self.schedules.splice(index, 1);
-                }
-
-                $.ajax({
-                    url: "/schedule/" + selected.id,
-                    type: "DELETE",
-                    success: function(response) {
-                        self.loading.add = false;
-                        self.message = "Successful removed!";
                     },
-                    error: function(xhr) {
-                        self.loading.add = false;
-                        self.message = xhr.responseText;
+                    transformData(data) {
+                        return parseSchedule(data);
+                        // return data;
+                    },
+                    ui(loading, msg) {
+                        self.message = msg;
+                        self.loading.add = loading;
+                    },
+                    complete() {
+                        self.selected.departureDate = null;
+                        self.selected.arrivalDate = null;
                     }
                 });
             },
 
-            parseSchedule: function (item) {
-                item.departure = new Date(Date.parse(item.departure));
-                item.arrival = new Date(Date.parse(item.arrival));
-                return item;
-            }
+            deleteSchedule: function () {
+                const self = this;
+                const selected = self.selected.schedule;
+
+                self.selected.schedule = null;
+                self.removeSchedule({
+                    id: selected.id,
+                    ui(loading, msg) {
+                        self.loading.add = loading;
+                        self.message = msg;
+                    }
+                });
+            },
         }
-    });
+    }
 </script>
+
+<style scoped>
+
+</style>

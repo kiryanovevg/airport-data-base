@@ -1,7 +1,6 @@
 package com.kiryanov.database.entity
 
 import org.hibernate.annotations.GenericGenerator
-import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -12,14 +11,14 @@ data class Airplane(
         val model: String,
 
         @Column(nullable = false)
-        val capacity: String,
+        val capacity: Int,
 
         @ManyToOne
         @JoinColumn(name = "airline_id")
         val airline: Airline,
 
-        @OneToOne(mappedBy = "plane", fetch = FetchType.EAGER)
-        val flight: Flight? = null,
+        @OneToMany(mappedBy = "airplane", fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
+        val flights: List<Flight>? = null,
 
         @Id
         @GeneratedValue(generator = "increment")
@@ -30,12 +29,12 @@ data class Airplane(
     data class DTO internal constructor(
             val id: Long = 0,
             val model: String,
-            val capacity: String,
+            val capacity: Int,
             val airlineId: Long,
-            val flight: Flight? = null
+            val flights: List<Flight.DTO>?
     )
 
     fun getDTO() = DTO(
-            id, model, capacity, airline.id
+            id, model, capacity, airline.id, flights?.map { it.getDTO() }
     )
 }
