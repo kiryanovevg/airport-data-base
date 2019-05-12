@@ -16,7 +16,7 @@ data class Ticket(
         @Column(nullable = false)
         val place: Int,
 
-        @ManyToOne(optional = false, cascade = [CascadeType.ALL])
+        @ManyToOne(optional = false)
         @JoinColumn(name = "flight_id")
         val flight: Flight,
 

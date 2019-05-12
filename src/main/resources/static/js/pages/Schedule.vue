@@ -233,7 +233,7 @@
                 const self = this;
 
                 if (!self.selected.departureDate
-                    && !self.selected.arrivalDate) {
+                    || !self.selected.arrivalDate) {
                     self.message = "Выберите даты!";
                     return
                 }

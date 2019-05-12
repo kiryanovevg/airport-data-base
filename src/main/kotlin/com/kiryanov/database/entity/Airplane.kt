@@ -11,7 +11,7 @@ data class Airplane(
         val model: String,
 
         @Column(nullable = false)
-        val capacity: String,
+        val capacity: Int,
 
         @ManyToOne
         @JoinColumn(name = "airline_id")
@@ -29,7 +29,7 @@ data class Airplane(
     data class DTO internal constructor(
             val id: Long = 0,
             val model: String,
-            val capacity: String,
+            val capacity: Int,
             val airlineId: Long,
             val flights: List<Flight.DTO>?
     )

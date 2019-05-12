@@ -34,8 +34,8 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Capacity</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Capacity" aria-describedby="inputGroup-sizing-sm"
-                               v-model="input.capacity"
+                        <input type="number" min="1" class="form-control" aria-label="Capacity" aria-describedby="inputGroup-sizing-sm"
+                               v-model.number="input.capacity"
                         >
                     </div>
 
