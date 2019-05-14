@@ -1,7 +1,9 @@
 package com.kiryanov.database.services
 
 import com.kiryanov.database.controllers.RestException
+import com.kiryanov.database.entity.City
 import com.kiryanov.database.entity.Flight
+import com.kiryanov.database.getValueSafety
 import com.kiryanov.database.repositories.AirplaneRepository
 import com.kiryanov.database.repositories.DirectionRepository
 import com.kiryanov.database.repositories.FlightRepository
@@ -16,14 +18,18 @@ class FlightService {
     @Autowired
     private lateinit var flightRepository: FlightRepository
     @Autowired
-    private lateinit var airplaneRepository: AirplaneRepository
+    private lateinit var airplaneService: AirplaneService
     @Autowired
-    private lateinit var directionRepository: DirectionRepository
+    private lateinit var directionService: DirectionService
     @Autowired
-    private lateinit var scheduleRepository: ScheduleRepository
+    private lateinit var scheduleService: ScheduleService
 
     fun getAll(): List<Flight> = flightRepository
             .findAll()
+
+    fun findById(id: Long): Flight = flightRepository
+            .findByIdOrNull(id)
+            ?: throw RestException("City not found")
 
     fun getFlightWithEmptyPlaces(): List<Flight> {
         return flightRepository.findAll().filter { flight ->
@@ -39,39 +45,19 @@ class FlightService {
         val placesList = flight.tickets.map { ticket -> ticket.place }
         val result = (1..flight.airplane.capacity).toList()
 
-        return result.filter { i: Int -> !placesList.contains(i) }
+        return result.filter { !placesList.contains(it) }
     }
 
-    fun findById(id: Long): Flight = flightRepository
-            .findByIdOrNull(id)
-            ?: throw RestException("Flight not found")
+    fun addFlight(dto: HashMap<String, String>?): Flight = dto?.let { map ->
+        val price = map.getValueSafety("price").toInt()
+        val airplane = airplaneService.findById(map.getValueSafety("airplane").toLong())
+        val direction = directionService.findById(map.getValueSafety("direction").toLong())
+        val schedule = scheduleService.findById(map.getValueSafety("schedule").toLong())
 
-    fun addFlight(dto: Flight.DTO?): Flight {
-        if (dto != null) {
-            if (dto.price == 0
-                    || dto.airplane == 0L
-                    || dto.direction == 0L
-                    || dto.schedule == 0L)
-                throw RestException("Заполните все данные")
-            if (dto.price < 0) throw RestException("Цена не может быть меньше нуля")
+        if (schedule.flight != null) throw RestException("Schedule already using!")
 
-            val airplane = airplaneRepository
-                    .findByIdOrNull(dto.airplane)
-                    ?: throw RestException("Airplane id not found!")
-
-            val direction = directionRepository
-                    .findByIdOrNull(dto.direction)
-                    ?: throw RestException("Direction id not found!")
-
-            val schedule = scheduleRepository
-                    .findByIdOrNull(dto.schedule)
-                    ?: throw RestException("Schedule id not found!")
-
-            if (schedule.flight != null) throw RestException("Schedule already using!")
-            val flight = Flight(dto.price, schedule, direction, airplane, emptyList())
-            return flightRepository.save(flight)
-        } else throw RestException("Введите данные")
-    }
+        return flightRepository.save(Flight(price, schedule, direction, airplane, emptyList()))
+    } ?: throw RestException("Empty RequestBody")
 
     fun deleteFlight(id: Long) {
         if (flightRepository.existsById(id)) {

@@ -4,6 +4,7 @@ import com.kiryanov.database.controllers.RestException
 import com.kiryanov.database.entity.Flight
 import com.kiryanov.database.entity.Schedule
 import com.kiryanov.database.entity.Ticket
+import com.kiryanov.database.getValueSafety
 import com.kiryanov.database.repositories.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -16,7 +17,7 @@ class TicketService {
     private lateinit var ticketRepository: TicketRepository
 
     @Autowired
-    private lateinit var flightRepository: FlightRepository
+    private lateinit var flightService: FlightService
 
     fun getAll(): List<Ticket> = ticketRepository
             .findAll()
@@ -25,23 +26,17 @@ class TicketService {
             .findByIdOrNull(id)
             ?: throw RestException("Ticket not found")
 
-    fun addTicket(dto: Ticket.DTO?): Ticket {
-        if (dto != null) {
-            if (dto.flight == 0L
-                    || dto.place == 0)
-                throw RestException("Заполните все данные")
+    fun addTicket(dto: HashMap<String, String>?): Ticket = dto?.let { map ->
+        val flight = flightService.findById(map.getValueSafety("flight").toLong())
+        val place = map.getValueSafety("place").toInt()
+        val luggage = map.getValueSafety("luggage").toBoolean()
 
-            val flight = flightRepository
-                    .findByIdOrNull(dto.flight)
-                    ?: throw RestException("Flight id not found!")
+        if (place <= 0) throw RestException("Неверное место")
+        if (flight.tickets.size >= flight.airplane.capacity)
+            throw RestException("Нет свободных мест на этот рейс")
 
-            if (flight.tickets.size >= flight.airplane.capacity)
-                throw RestException("Нет свободных мест на этот рейс")
-
-            val ticket = Ticket(dto.luggage, dto.place, flight)
-            return ticketRepository.save(ticket)
-        } else throw RestException("Введите данные")
-    }
+        return ticketRepository.save(Ticket(luggage, place, flight))
+    } ?: throw RestException("Empty RequestBody")
 
     fun deleteFlight(id: Long) {
         if (ticketRepository.existsById(id)) {

@@ -14,14 +14,13 @@ class TicketController {
     private lateinit var ticketService: TicketService
 
     @GetMapping
-    fun getAllTicket(): List<Ticket.DTO> {
+    fun getAllTicket(): List<Ticket> {
         return ticketService.getAll()
-                .map { it.getDTO() }
     }
 
     @PostMapping
-    fun addFlight(@RequestBody dto: Ticket.DTO?): Ticket.DTO {
-        return ticketService.addTicket(dto).getDTO()
+    fun addFlight(@RequestBody dto: HashMap<String, String>?): Ticket {
+        return ticketService.addTicket(dto)
     }
 
     @DeleteMapping("/{id}")

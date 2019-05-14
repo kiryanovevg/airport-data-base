@@ -44,8 +44,8 @@
                 <hr>
 
             </div>
-            <div class="col">
-                <div class="d-flex justify-content-between" v-if="selected">
+            <div class="col" v-if="selected">
+                <div class="d-flex justify-content-between">
                     <h2>{{ selected.name }}</h2>
                     <button
                             type="button"
@@ -54,7 +54,16 @@
                     >Delete</button>
                 </div>
 
-                <div>{{ selected }}</div>
+                <div v-if="selected.airplanes.length !== 0">
+                    <div>Airplanes:</div>
+                    <div
+                            v-for="(airplane, index) in selected.airplanes"
+                    >
+                        <router-link :to="{ path: `/airplanes/${airplane.id}` }">
+                            {{ airplane.model }}
+                        </router-link>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

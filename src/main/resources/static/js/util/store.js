@@ -51,7 +51,7 @@ function Store(api) {
         },
 
         actions: {
-            getAction({ commit, state }, {ui, transformData, params}) {
+            getAction({ commit, state }, {ui, transformData, params, complete}) {
                 if (ui !== undefined) {
                     ui(true, null);
 
@@ -62,6 +62,7 @@ function Store(api) {
                             if (transformData !== undefined) data = transformData(data);
                             commit('setMutation', data);
                             ui(false, null);
+                            if (complete !== undefined) complete();
                         },
 
                         error => {

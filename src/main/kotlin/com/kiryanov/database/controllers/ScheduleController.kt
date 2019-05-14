@@ -14,14 +14,13 @@ class ScheduleController {
     private lateinit var scheduledService: ScheduleService
 
     @GetMapping
-    fun getAllSchedule(): List<Schedule.DTO> {
+    fun getAllSchedule(): List<Schedule> {
         return scheduledService.getAllSchedule()
-                .map { it.getDTO() }
     }
 
     @PostMapping
-    fun addSchedule(@RequestBody dto: Schedule.DTO?): Schedule.DTO {
-        return scheduledService.addSchedule(dto).getDTO()
+    fun addSchedule(@RequestBody dto: HashMap<String, String>?): Schedule {
+        return scheduledService.addSchedule(dto)
     }
 
     @DeleteMapping("/{id}")

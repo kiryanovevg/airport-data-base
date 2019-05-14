@@ -13,14 +13,21 @@ class DataComponent @Autowired constructor(
         private val directionRepository: DirectionRepository,
         private val cityRepository: CityRepository,
         private val scheduleRepository: ScheduleRepository,
-        private val flightRepository: FlightRepository) {
+        private val flightRepository: FlightRepository,
+        private val userRepository: UserRepository) {
 
     init {
-        initAirlines()
-        initAirplanes()
-        initDirections()
-        initSchedules()
-        initFlights()
+//        initUsers()
+//        initAirlines()
+//        initAirplanes()
+//        initDirections()
+//        initSchedules()
+//        initFlights()
+    }
+
+    private fun initUsers() {
+        userRepository.save(User("Marina", "111", true))
+        userRepository.save(User("Irina", "111", true))
     }
 
     private fun initAirlines() {
@@ -42,9 +49,9 @@ class DataComponent @Autowired constructor(
         cityRepository.save(City("Rostov", emptyList(), emptyList(), 3))
         cityRepository.save(City("Piter", emptyList(), emptyList(), 4))
 
-        directionRepository.save(Direction(cityRepository.getOne(1), cityRepository.getOne(2)))
-        directionRepository.save(Direction(cityRepository.getOne(2), cityRepository.getOne(3)))
-        directionRepository.save(Direction(cityRepository.getOne(3), cityRepository.getOne(4)))
+        directionRepository.save(Direction(cityRepository.getOne(1), cityRepository.getOne(2), emptyList()))
+        directionRepository.save(Direction(cityRepository.getOne(2), cityRepository.getOne(3), emptyList()))
+        directionRepository.save(Direction(cityRepository.getOne(3), cityRepository.getOne(4), emptyList()))
     }
 
     private fun initSchedules() {

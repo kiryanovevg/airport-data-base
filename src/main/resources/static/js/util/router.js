@@ -15,7 +15,7 @@ Vue.use(VueRouter);
 const routes = [
     {path: '/login', component: Login},
     {path: '/airlines', component: Airlines},
-    {path: '/airplanes', component: Airplanes},
+    {path: '/airplanes', component: Airplanes, children: [ { path: '/airplanes/:id', component: Airplanes } ]},
     {path: '/directions', component: Directions},
     {path: '/schedule', component: Schedule},
     {path: '/flights', component: Flights},

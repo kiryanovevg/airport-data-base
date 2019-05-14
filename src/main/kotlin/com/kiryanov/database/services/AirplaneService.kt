@@ -1,9 +1,8 @@
 package com.kiryanov.database.services
 
 import com.kiryanov.database.controllers.RestException
-import com.kiryanov.database.entity.Airline
 import com.kiryanov.database.entity.Airplane
-import com.kiryanov.database.repositories.AirlineRepository
+import com.kiryanov.database.getValueSafety
 import com.kiryanov.database.repositories.AirplaneRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
@@ -15,6 +14,9 @@ class AirplaneService {
     @Autowired
     private lateinit var airplaneRepository: AirplaneRepository
 
+    @Autowired
+    private lateinit var airlineService: AirlineService
+
     fun getAll(): List<Airplane> = airplaneRepository
             .findAll()
 
@@ -22,13 +24,14 @@ class AirplaneService {
             .findByIdOrNull(id)
             ?: throw RestException("Airplane not found")
 
-    fun addAirplane(dto: Airplane.DTO,
-                    airline: Airline
-    ): Airplane {
-        if (dto.model.trim().isNotEmpty() && dto.capacity > 0) {
-            return airplaneRepository.save(Airplane(dto.model.trim(), dto.capacity, airline))
-        } else throw RestException("Пустые поля")
-    }
+    fun addAirplane(dto: HashMap<String, String>?): Airplane = dto?.let { map ->
+        val model = map.getValueSafety("model")
+        val capacity = map.getValueSafety("capacity").toInt()
+        val airlineId = map.getValueSafety("airlineId").toLong()
+
+        val airline = airlineService.findById(airlineId)
+        return airplaneRepository.save(Airplane(model, capacity, airline))
+    } ?: throw RestException("Empty RequestBody")
 
     fun deleteAirplane(id: Long) {
         if (airplaneRepository.existsById(id)) {

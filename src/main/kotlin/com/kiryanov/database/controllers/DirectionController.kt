@@ -1,5 +1,6 @@
 package com.kiryanov.database.controllers
 
+import com.fasterxml.jackson.annotation.JsonView
 import com.kiryanov.database.entity.City
 import com.kiryanov.database.entity.Direction
 import com.kiryanov.database.services.DirectionService
@@ -14,37 +15,45 @@ class DirectionController {
     @Autowired
     private lateinit var directionService: DirectionService
 
+    private interface DirectionRest:
+            Direction.ID,
+            Direction.FromCity,
+            Direction.ToCity,
+            CityRest
+
+    private interface CityRest:
+            City.ID,
+            City.Name
+
+
+    @JsonView(DirectionRest::class)
     @GetMapping
-    fun getAllDirections(): List<Direction.DTO> {
+    fun getAllDirections(): List<Direction> {
         return directionService.getAllDirections()
-                .map { it.getDTO() }
     }
 
+    @JsonView(CityRest::class)
     @GetMapping("/cities")
-    fun getAllCities(): List<City.DTO> {
+    fun getAllCities(): List<City> {
         return directionService.getAllCities()
-                .map { it.getDTO() }
     }
 
+    @JsonView(CityRest::class)
     @PostMapping("/cities")
-    fun addCity(@RequestBody dto: City.DTO?): City.DTO {
-        return directionService.addCity(dto).getDTO()
+    fun addCity(@RequestBody dto: HashMap<String, String>): City {
+        return directionService.addCity(dto)
+    }
+
+    @JsonView(DirectionRest::class)
+    @PostMapping
+    fun addDirection(@RequestBody dto: HashMap<String, String>): Direction {
+        return directionService.addDirection(dto)
     }
 
     @DeleteMapping("/cities/{id}")
     fun deleteCity(@PathVariable("id") id: Long): ResponseEntity<String> {
         directionService.deleteCity(id)
         return ResponseEntity.ok("Successful deleted")
-    }
-
-    @PostMapping
-    fun addDirection(@RequestBody dto: Direction.DTO?): Direction.DTO {
-        return if (dto != null) {
-            val fromCity = directionService.findCityById(dto.fromCityId)
-            val toCity = directionService.findCityById(dto.toCityId)
-
-            directionService.addDirection(fromCity, toCity).getDTO()
-        } else throw RestException("Data error")
     }
 
     @DeleteMapping("/{id}")

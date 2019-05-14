@@ -1,5 +1,6 @@
 package com.kiryanov.database.entity
 
+import com.fasterxml.jackson.annotation.JsonView
 import org.hibernate.annotations.GenericGenerator
 import java.util.*
 import javax.persistence.*
@@ -8,30 +9,29 @@ import javax.persistence.*
 @Table(name = "direction")
 data class Direction(
 
+        @JsonView(FromCity::class)
         @ManyToOne
         @JoinColumn(name = "from_city_id")
         val fromCity: City,
 
+        @JsonView(ToCity::class)
         @ManyToOne
         @JoinColumn(name = "to_city_id")
         val toCity: City,
 
+        @JsonView(Flights::class)
         @OneToMany(mappedBy = "direction", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        val flight: List<Flight>? = null,
+        val flights: List<Flight>,
 
+        @JsonView(ID::class)
         @Id
         @GeneratedValue(generator = "increment")
         @GenericGenerator(name= "increment", strategy= "increment")
         @Column(nullable = false, updatable = false)
         val id: Long = 0
 ) {
-        data class DTO internal constructor(
-                val id: Long = 0,
-                val fromCityId: Long,
-                val toCityId: Long
-        )
-
-        fun getDTO() = DTO(
-                id, fromCity.id, toCity.id
-        )
+        interface FromCity
+        interface ToCity
+        interface Flights
+        interface ID
 }

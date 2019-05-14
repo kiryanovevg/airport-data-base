@@ -1,9 +1,9 @@
 package com.kiryanov.database.controllers
 
+import com.fasterxml.jackson.annotation.JsonView
+import com.kiryanov.database.entity.Airline
 import com.kiryanov.database.entity.Airplane
-import com.kiryanov.database.services.AirlineService
 import com.kiryanov.database.services.AirplaneService
-import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,26 +15,30 @@ class AirplaneController {
     @Autowired
     private lateinit var airplaneService: AirplaneService
 
-    @Autowired
-    private lateinit var airlineService: AirlineService
+    private interface Rest:
+            Airplane.ID,
+            Airplane.Model,
+            Airplane.Capacity,
+            Airplane.Airline,
+            Airline.ID,
+            Airline.Name
 
+    @JsonView(Rest::class)
     @GetMapping
-    fun getAllAirplanes(): List<Airplane.DTO> {
+    fun getAllAirplanes(): List<Airplane> {
         return airplaneService.getAll()
-                .map { it.getDTO() }
     }
 
+    @JsonView(Rest::class)
     @GetMapping("/{id}")
-    fun getAirplane(@PathVariable("id") id: Long): Airplane.DTO {
-        return airplaneService.findById(id).getDTO()
+    fun getAirplane(@PathVariable("id") id: Long): Airplane {
+        return airplaneService.findById(id)
     }
 
+    @JsonView(Rest::class)
     @PostMapping
-    fun addAirplanes(@RequestBody dto: Airplane.DTO?): Airplane.DTO {
-        return if (dto != null) {
-            val airline = airlineService.findById(dto.airlineId)
-            airplaneService.addAirplane(dto, airline).getDTO()
-        } else throw RestException("Data error")
+    fun addAirplanes(@RequestBody dto: HashMap<String, String>?): Airplane {
+        return airplaneService.addAirplane(dto)
     }
 
     @DeleteMapping("/{id}")

@@ -89,7 +89,7 @@
                 </div>
 
                 <div>Capacity: {{ selected.airplane.capacity }}</div>
-                <div>Airline: {{ getAirlineFromId(selected.airplane.airlineId).name }}</div>
+                <div>Airline: {{ selected.airplane.airline.name }}</div>
             </div>
 
 
@@ -138,10 +138,6 @@
                 removeAirplane: 'airplanes/removeAction',
             }),
 
-            select(s) {
-              alert(s)
-            },
-
             clearAddField: function () {
                 this.input.model = null;
                 this.input.capacity = null;
@@ -149,21 +145,7 @@
             },
 
             selectAirplane: function(index) {
-                this.selected.airplane = this.airplanes[index]
-            },
-
-            getAirlineFromId: function (id) {
-                let result = null;
-
-                if (id) {
-                    this.airlines.forEach(function (value) {
-                        if (value.id === id) {
-                            result = value;
-                        }
-                    });
-                }
-
-                return result;
+                this.selected.airplane = this.airplanes[index];
             },
 
             loadAirlines: function() {
@@ -182,6 +164,14 @@
                     ui(loading, msg) {
                         if (msg != null) self.message = msg;
                         self.loading.content = loading;
+                    },
+                    complete() {
+                        const id = parseInt(self.$route.params.id, 10);
+                        if (id) {
+                            self.airplanes.forEach((item, index) => {
+                                if (item.id === id) self.selectAirplane(index)
+                            })
+                        }
                     }
                 });
             },
