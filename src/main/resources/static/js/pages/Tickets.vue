@@ -27,7 +27,7 @@
                             <option
                                     v-for="(flight, index) in flights"
                                     :value="flight"
-                            >{{ flight }}</option>
+                            >{{ getFlightText(flight) }}</option>
                         </select>
                         <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
                     </div>
@@ -73,7 +73,7 @@
                             v-on:click="selectTicket(index)"
                             v-bind:class="{ active: ticket === selected.ticket }"
                     >
-                        {{ ticket }}
+                        {{ getTicketText(ticket) }}
                     </li>
                 </ul>
 
@@ -81,23 +81,31 @@
 
             </div>
 
-            <div class="col" v-if="">
-                <!--<div class="d-flex justify-content-between">
-                    <h2>{{ selected.flight.id }}</h2>
+            <div class="col" v-if="selected.ticket">
+                <div class="d-flex justify-content-between">
+                    <h2>Билет #{{ selected.ticket.id }}</h2>
                     <button
                             type="button"
                             class="btn btn-danger ml-4"
-                            v-on:click="deleteFlight"
+                            v-on:click="deleteTicket"
                     >Delete</button>
                 </div>
 
-                <div>Price: {{ selectedPrice }}</div>
+                <div>Flight: #{{ selected.ticket.flight.id }}</div>
                 <br>
-                <div>Airplane: {{ selectedAirplane }}</div>
+                <div>Place: {{ selected.ticket.place }}</div>
                 <br>
-                <div>Direction: {{ selectedDirection }}</div>
+                <div>Price: {{ selected.ticket.flight.price }}</div>
                 <br>
-                <div>Schedule: {{ selectedSchedule }}</div>-->
+                <div>Airplane: {{ selected.ticket.flight.airplane.model }}</div>
+                <br>
+                <div>Direction: {{
+                    selected.ticket.flight.direction.fromCity.name
+                    + ' => '
+                    + selected.ticket.flight.direction.toCity.name
+                    }}</div>
+                <br>
+                <div>Schedule: {{ selectedSchedule }}</div>
             </div>
         </div>
     </div>
@@ -105,6 +113,7 @@
 
 <script>
     import {mapActions, mapState} from "vuex";
+    import {getScheduleText, parseSchedule} from "../util/store.js";
 
     export default {
         name: "Tickets",
@@ -148,6 +157,10 @@
 
             visibilityPlaces() {
                 return this.inputFlight != null
+            },
+
+            selectedSchedule() {
+                return getScheduleText(parseSchedule(this.selected.ticket.flight.schedule))
             }
         },
         methods: {
@@ -156,7 +169,19 @@
                 getTickets: 'tickets/getAction',
                 getPlaces: 'places/getAction',
                 createTicket: 'tickets/addAction',
+                removeTicket: 'tickets/removeAction',
             }),
+
+            getTicketText(ticket) {
+                return '#' + ticket.flight.id + ' | ' + this.getFlightText(ticket.flight) + ' | Place: ' + ticket.place
+            },
+
+            getFlightText(flight) {
+                const direction = flight.direction;
+                const fromCity = direction.fromCity;
+                const toCity = direction.toCity;
+                return fromCity.name + ' => ' + toCity.name + ' | Price: ' + flight.price;
+            },
 
             selectTicket: function(index) {
                 this.selected.ticket = this.tickets[index];
@@ -187,6 +212,23 @@
                     data,
                     ui(loading, msg) {
                         self.loading.add = loading;
+                        self.message = msg;
+                    },
+                    complete() {
+                        self.loadFlights();
+                    },
+                });
+            },
+
+            deleteTicket() {
+                const self = this;
+                const selected = self.selected.ticket;
+
+                self.selected.ticket = null;
+                self.removeTicket({
+                    id: selected.id,
+                    ui(loading, msg) {
+                        self.loading.tickets = loading;
                         self.message = msg;
                     },
                     complete() {

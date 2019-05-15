@@ -118,3 +118,21 @@ export function parseSchedule (item) {
     item.arrival = new Date(Date.parse(item.arrival));
     return item;
 }
+
+export function getById(data, id) {
+    let result = null;
+    data.forEach(item => {
+        if (item.id === id) result = item;
+    });
+    return result;
+}
+
+export function getScheduleText(schedule) {
+    const dep = schedule.departure;
+    const arr = schedule.arrival;
+
+    const depStr = `${dep.getDate()}-${dep.getMonth() + 1}-${dep.getFullYear()} ${dep.getHours()}:${dep.getMinutes()}`;
+    const arrStr = `${arr.getDate()}-${arr.getMonth() + 1}-${arr.getFullYear()} ${arr.getHours()}:${arr.getMinutes()}`;
+
+    return depStr + ' => ' + arrStr
+}

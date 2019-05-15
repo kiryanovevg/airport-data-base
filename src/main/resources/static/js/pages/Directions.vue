@@ -121,8 +121,8 @@
                 <div v-if="selected.direction">
                     <div class="d-flex justify-content-between">
                         <div class="d-inline-flex p-2 bd-highlight">
-                            {{ getCityById(selected.direction.fromCityId).name }} =>
-                            {{ getCityById(selected.direction.toCityId).name }}
+                            {{ selected.direction.fromCity.name }} =>
+                            {{ selected.direction.toCity.name }}
                         </div>
                         <button
                                 type="button"
@@ -144,8 +144,8 @@
                             v-bind:class="{ active: direction === selected.city }"
                     >
                         {{ index + 1 }} -
-                        {{ getCityById(direction.fromCityId).name }} =>
-                        {{ getCityById(direction.toCityId).name }}
+                        {{ direction.fromCity.name }} =>
+                        {{ direction.toCity.name }}
                     </li>
                 </ul>
             </div>
@@ -310,14 +310,6 @@
                         self.message = msg;
                     }
                 });
-            },
-
-            getCityById: function (id) {
-                let city = null;
-                if (id) this.cities.forEach(value => {
-                    if (!city && value.id === id) city = value;
-                });
-                return city;
             },
         }
     }

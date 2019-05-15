@@ -94,7 +94,7 @@
                             v-on:click="selectSchedule(index)"
                             v-bind:class="{ active: schedule === selected.schedule }"
                     >
-                        {{index + 1}} - {{ schedule.departure }} => {{ schedule.arrival }}
+                        {{index + 1}} - {{ getScheduleText(schedule) }}
                     </li>
                 </ul>
 
@@ -107,7 +107,7 @@
 
 <script>
     import {mapActions, mapState} from "vuex";
-    import {parseSchedule} from "../util/store.js";
+    import {parseSchedule, getScheduleText} from "../util/store.js";
 
     export default {
         name: "Schedule",
@@ -147,6 +147,10 @@
                 createSchedule: 'schedule/addAction',
                 removeSchedule: 'schedule/removeAction',
             }),
+
+            getScheduleText(schedule) {
+                return getScheduleText(schedule);
+            },
 
             selectSchedule: function (index) {
                 this.selected.schedule = this.schedules[index];

@@ -17,12 +17,26 @@ class DataComponent @Autowired constructor(
         private val userRepository: UserRepository) {
 
     init {
-//        initUsers()
-//        initAirlines()
-//        initAirplanes()
-//        initDirections()
-//        initSchedules()
-//        initFlights()
+//        initFunctions()
+    }
+
+    fun clear() {
+        airlineRepository.deleteAllInBatch()
+        airplaneRepository.deleteAllInBatch()
+        directionRepository.deleteAllInBatch()
+        cityRepository.deleteAllInBatch()
+        scheduleRepository.deleteAllInBatch()
+        flightRepository.deleteAllInBatch()
+        userRepository.deleteAllInBatch()
+    }
+
+    fun fill() {
+        initUsers()
+        initAirlines()
+        initAirplanes()
+        initDirections()
+        initSchedules()
+        initFlights()
     }
 
     private fun initUsers() {
@@ -38,8 +52,8 @@ class DataComponent @Autowired constructor(
     }
 
     private fun initAirplanes() {
-        airplaneRepository.save(Airplane("Boeing-777", 100, airlineRepository.getOne(1)))
-        airplaneRepository.save(Airplane("Boeing-336", 100, airlineRepository.getOne(1)))
+        airplaneRepository.save(Airplane("Boeing-777", 5, airlineRepository.getOne(1)))
+        airplaneRepository.save(Airplane("Boeing-336", 5, airlineRepository.getOne(1)))
         airplaneRepository.save(Airplane("СУ-26", 2, airlineRepository.getOne(2)))
     }
 

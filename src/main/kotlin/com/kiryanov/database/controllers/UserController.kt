@@ -1,5 +1,6 @@
 package com.kiryanov.database.controllers
 
+import com.kiryanov.database.DataComponent
 import com.kiryanov.database.entity.User
 import com.kiryanov.database.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,14 +10,29 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.context.request.WebRequest
 
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 @RestController
 class UserController {
 
     @Autowired
     private lateinit var userService: UserService
 
-    @GetMapping("/register")
+    @Autowired
+    private lateinit var dataComponent: DataComponent
+
+    @GetMapping("/clear")
+    fun clearData(): ResponseEntity<String> {
+        dataComponent.clear()
+        return ResponseEntity.ok("Data deleted </br> <a href=\"/api/fill\">Fill</a>")
+    }
+
+    @GetMapping("/fill")
+    fun fillData(): ResponseEntity<String> {
+        dataComponent.fill()
+        return ResponseEntity.ok("Data added")
+    }
+
+    @GetMapping("/user/register")
     fun registerUser(@RequestParam("login") login: String?,
                      @RequestParam("password") password: String?,
                      @RequestParam("admin") adminPermission: Boolean?
@@ -31,6 +47,6 @@ class UserController {
         } else throw RestException("Введите все данные")
     }
 
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     fun loginUser(@RequestBody user: User?): User = userService.getUser(user)
 }

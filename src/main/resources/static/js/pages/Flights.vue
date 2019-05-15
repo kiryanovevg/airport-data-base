@@ -38,7 +38,7 @@
                                 <option
                                         v-for="(airplane, index) in airplanes"
                                         :value="airplane"
-                                >{{ airplane }}</option>
+                                >{{ airplane.model }}</option>
                             </select>
                             <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
                         </div>
@@ -58,7 +58,7 @@
                                 <option
                                         v-for="(direction, index) in directions"
                                         :value="direction"
-                                >{{ direction }}</option>
+                                >{{ getDirectionText(direction) }}</option>
                             </select>
                             <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
                         </div>
@@ -76,9 +76,9 @@
                                     v-model="input.schedule"
                             >
                                 <option
-                                        v-for="(schedule, index) in schedules"
+                                        v-for="(schedule, index) in notUsedSchedules"
                                         :value="schedule"
-                                >{{ schedule }}</option>
+                                >{{ getScheduleText(schedule)}}</option>
                             </select>
                             <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
                         </div>
@@ -114,7 +114,7 @@
 
             <div class="col" v-if="selected.flight">
                 <div class="d-flex justify-content-between">
-                    <h2>{{ selected.flight.id }}</h2>
+                    <h2>Рейс #{{ selected.flight.id }}</h2>
                     <button
                             type="button"
                             class="btn btn-danger ml-4"
@@ -136,7 +136,7 @@
 
 <script>
     import {mapActions, mapState} from "vuex";
-    import {parseSchedule} from "../util/store.js";
+    import {parseSchedule, getById, getScheduleText} from "../util/store.js";
 
     export default {
         name: "Flights",
@@ -182,30 +182,30 @@
             },
 
             selectedAirplane() {
-                return this.getById(this.airplanes, this.selected.flight.airplane).model
+                return getById(this.airplanes, this.selected.flight.airplane.id).model
             },
 
             selectedDirection() {
-                const direction = this.getById(this.directions, this.selected.flight.direction);
-                const fromCity = this.getById(this.cities, direction.fromCityId);
-                const toCity = this.getById(this.cities, direction.toCityId);
-                return fromCity.name + ' => ' + toCity.name
+                const direction = this.selected.flight.direction;
+                return this.getDirectionText(direction);
             },
 
             selectedSchedule() {
-                const schedule = this.getById(this.schedules, this.selected.flight.schedule);
-                const dep = schedule.departure;
-                const arr = schedule.arrival;
-
-                const depStr = `${dep.getDate() + 1}-${dep.getMonth()}-${dep.getFullYear()} ${dep.getHours()}:${dep.getMinutes()}`;
-                const arrStr = `${arr.getDate() + 1}-${arr.getMonth()}-${arr.getFullYear()} ${arr.getHours()}:${arr.getMinutes()}`;
-
-                return depStr + ' => ' + arrStr
+                const schedule = getById(this.schedules, this.selected.flight.schedule.id);
+                return getScheduleText(schedule);
             },
 
             selectedPrice() {
                 return this.selected.flight.price
             },
+
+            notUsedSchedules() {
+                const result = [];
+                this.schedules.forEach(item => {
+                    if (item.flight == null) result.push(item);
+                });
+                return result;
+            }
         },
         created() {
             this.loadAirplanes();
@@ -226,11 +226,16 @@
                 removeFlight: 'flights/removeAction',
             }),
 
+            getScheduleText(schedule) {
+                return getScheduleText(schedule);
+            },
+
+            getDirectionText(direction) {
+                return direction.fromCity.name + ' => ' + direction.toCity.name
+            },
+
             listItem(flight) {
-                const direction = this.getById(this.directions, flight.direction);
-                const fromCity = this.getById(this.cities, direction.fromCityId);
-                const toCity = this.getById(this.cities, direction.toCityId);
-                return fromCity.name + ' => ' + toCity.name + ' | Price: ' + flight.price;
+                return this.getDirectionText(flight.direction) + ' | Price: ' + flight.price;
             },
 
             selectFlight: function(index) {
@@ -267,10 +272,12 @@
                         self.message = msg;
                     },
                     complete() {
+                        self.selected.flight = null;
                         self.input.price = null;
                         self.input.airplane = null;
                         self.input.direction = null;
                         self.input.schedule = null;
+                        self.loadSchedules();
                     }
                 });
             },
@@ -287,7 +294,7 @@
                         self.loading.flights = loading;
                     },
                     complete() {
-
+                        self.loadSchedules();
                     }
                 });
             },
@@ -348,13 +355,7 @@
                 });
             },
 
-            getById(data, id) {
-                let result = null;
-                data.forEach(item => {
-                    if (item.id === id) result = item;
-                });
-                return result;
-            },
+
         }
     }
 </script>

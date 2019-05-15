@@ -1,7 +1,7 @@
 package com.kiryanov.database.controllers
 
 import com.fasterxml.jackson.annotation.JsonView
-import com.kiryanov.database.entity.Flight
+import com.kiryanov.database.entity.*
 import com.kiryanov.database.services.FlightService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -16,9 +16,20 @@ class FlightController {
     @Autowired
     private lateinit var flightService: FlightService
 
-    private interface Rest
+    private interface Rest:
+            Flight.ID,
+            Flight.Price,
+            Flight.Airplane,
+            Flight.Direction,
+            Flight.Schedule,
+            Airplane.ID,
+            Direction.ID,
+            Direction.FromCity,
+            Direction.ToCity,
+            City.Name,
+            Schedule.ID
 
-    @JsonView(Rest::class)
+//    @JsonView(Rest::class)
     @GetMapping
     fun getAllFlight(
             @RequestParam(value = "free_places", defaultValue = "false") freePlaces: Boolean,
@@ -31,7 +42,7 @@ class FlightController {
         }
 
         return MappingJacksonValue(result).apply {
-//            serializationView = if (fullData) View.Airline
+            serializationView = Rest::class.java
         }
     }
 
