@@ -41,13 +41,13 @@ class TicketController {
 
     @JsonView(Rest::class)
     @PostMapping
-    fun addFlight(@RequestBody dto: HashMap<String, String>?): Ticket {
+    fun addTicket(@RequestBody dto: HashMap<String, String>?): Ticket {
         return ticketService.addTicket(dto)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteFlight(@PathVariable("id") id: Long): ResponseEntity<String> {
-        ticketService.deleteFlight(id)
+    fun deleteTicket(@PathVariable("id") id: Long): ResponseEntity<String> {
+        ticketService.delete(id)
         return ResponseEntity.ok("Successful deleted")
     }
 

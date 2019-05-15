@@ -3,30 +3,30 @@ package com.kiryanov.database.controllers
 import com.kiryanov.database.entity.User
 import com.kiryanov.database.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@RequestMapping("/user/api")
+@RequestMapping("/api/user")
 @RestController
 class UserController {
 
     @Autowired
     private lateinit var userService: UserService
 
-    @GetMapping("/register")
-    fun registerUser(@RequestParam("login") login: String?,
-                     @RequestParam("password") password: String?,
-                     @RequestParam("admin") adminPermission: Boolean?
-    ): ResponseEntity<User> {
-        return if (login?.isNotEmpty() == true
-                && password?.isNotEmpty() == true
-                && adminPermission?.toString()?.isNotEmpty() == true) {
-            ResponseEntity(
-                    userService.addUser(login, password, adminPermission),
-                    HttpStatus.OK
-            )
-        } else throw RestException("Введите все данные")
+    @GetMapping
+    fun getAllUsers(): List<User> {
+        return userService.getAll()
+    }
+
+    @PostMapping
+    fun addUser(@RequestBody dto: HashMap<String, String>?): User {
+        return userService.addUser(dto)
+    }
+
+    @DeleteMapping("/{id}")
+    fun deleteUser(@PathVariable("id") id: Long): ResponseEntity<String> {
+        userService.delete(id)
+        return ResponseEntity.ok("Successful deleted")
     }
 
     @PostMapping("/login")

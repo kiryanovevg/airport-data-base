@@ -38,7 +38,7 @@ class TicketService {
         return ticketRepository.save(Ticket(luggage, place, flight))
     } ?: throw RestException("Empty RequestBody")
 
-    fun deleteFlight(id: Long) {
+    fun delete(id: Long) {
         if (ticketRepository.existsById(id)) {
             ticketRepository.deleteById(id)
         } else throw RestException("Not Found")

@@ -2,6 +2,7 @@ package com.kiryanov.database.services
 
 import com.kiryanov.database.controllers.RestException
 import com.kiryanov.database.entity.User
+import com.kiryanov.database.getValueSafety
 import com.kiryanov.database.repositories.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -11,10 +12,17 @@ class UserService {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    fun findAll(): List<User> = userRepository.findAll()
+    fun getAll(): List<User> = userRepository.findAll()
 
-    fun addUser(login: String, password: String, adminPermission: Boolean) = userRepository
-            .save(User(login, password, adminPermission))
+    fun addUser(dto: HashMap<String, String>?): User = dto?.let { map ->
+        val login = map.getValueSafety("login")
+        val password = map.getValueSafety("password")
+
+        if (userRepository.findAll().firstOrNull { it.login == login } != null)
+            throw RestException("Пользователь с таким именем уже существует")
+
+        return userRepository.save(User(login, password, true))
+    } ?: throw RestException("Empty RequestBody")
 
     fun getUser(user: User?): User {
         if (user != null) {
@@ -28,5 +36,11 @@ class UserService {
                 } else throw RestException("Пользователь не найден")
             } else throw RestException("Введите данные")
         } else throw RestException("Введите данные")
+    }
+
+    fun delete(id: Long) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id)
+        } else throw RestException("Not Found")
     }
 }

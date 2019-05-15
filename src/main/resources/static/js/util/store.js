@@ -13,6 +13,7 @@ export default new Vuex.Store({
         flights: Store(Vue.resource('/api/flights{/id}')),
         places: Store(Vue.resource('/api/flights{/id}/places')),
         tickets: Store(Vue.resource('/api/tickets{/id}')),
+        users: Store(Vue.resource('/api/user{/id}')),
     }
 })
 
