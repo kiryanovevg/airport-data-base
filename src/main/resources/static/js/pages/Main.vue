@@ -34,6 +34,7 @@
                     {name: 'Flights', path: '/flights'},
                     {name: 'Tickets', path: '/tickets'},
                     {name: 'Users', path: '/users'},
+                    {name: 'Passenger', path: '/passenger'},
                 ]
             }
         }

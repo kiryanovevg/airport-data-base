@@ -10,6 +10,7 @@ import Schedule from "../pages/Schedule.vue";
 import Flights from "../pages/Flights.vue";
 import Tickets from "../pages/Tickets.vue";
 import Users from "../pages/Users.vue";
+import Passenger from "../pages/Passenger.vue";
 
 Vue.use(VueRouter);
 
@@ -22,8 +23,9 @@ const routes = [
     {path: '/flights', component: Flights},
     {path: '/tickets', component: Tickets},
     {path: '/users', component: Users},
+    {path: '/passenger', component: Passenger},
     {path: '/', component: Main},
-    {path: '*', component: Error}
+    {path: '*', component: Error},
 ];
 
 export default new VueRouter({

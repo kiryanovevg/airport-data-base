@@ -14,7 +14,9 @@ class DataComponent @Autowired constructor(
         private val cityRepository: CityRepository,
         private val scheduleRepository: ScheduleRepository,
         private val flightRepository: FlightRepository,
-        private val userRepository: UserRepository) {
+        private val userRepository: UserRepository,
+        private val passengerRepository: PassengerRepository,
+        private val ticketRepository: TicketRepository) {
 
     init {
 //        initFunctions()
@@ -28,6 +30,8 @@ class DataComponent @Autowired constructor(
         scheduleRepository.deleteAllInBatch()
         flightRepository.deleteAllInBatch()
         userRepository.deleteAllInBatch()
+        ticketRepository.deleteAllInBatch()
+        passengerRepository.deleteAllInBatch()
     }
 
     fun fill() {
@@ -37,6 +41,8 @@ class DataComponent @Autowired constructor(
         initDirections()
         initSchedules()
         initFlights()
+        initPassengers()
+        initTickets()
     }
 
     private fun initUsers() {
@@ -60,8 +66,8 @@ class DataComponent @Autowired constructor(
     private fun initDirections() {
         cityRepository.save(City("Moscow", emptyList(), emptyList(), 1))
         cityRepository.save(City("Salsk", emptyList(), emptyList(), 2))
-        cityRepository.save(City("Rostov", emptyList(), emptyList(), 3))
-        cityRepository.save(City("Piter", emptyList(), emptyList(), 4))
+        cityRepository.save(City("Rostov-on-Don", emptyList(), emptyList(), 3))
+        cityRepository.save(City("Sankt-Petersburg", emptyList(), emptyList(), 4))
 
         directionRepository.save(Direction(cityRepository.getOne(1), cityRepository.getOne(2), emptyList()))
         directionRepository.save(Direction(cityRepository.getOne(2), cityRepository.getOne(3), emptyList()))
@@ -106,6 +112,54 @@ class DataComponent @Autowired constructor(
                 directionRepository.getOne(3),
                 airplaneRepository.getOne(1),
                 emptyList()
+        ))
+    }
+
+    private fun initPassengers() {
+        passengerRepository.save(Passenger(
+                "Kiryanov",
+                "Evgeniy",
+                "Nikolaevich",
+                6012, 204611,
+                emptyList()
+        ))
+
+        passengerRepository.save(Passenger(
+                "Huzhahmetov",
+                "Ilya",
+                "Alekseevich",
+                6012, 246888,
+                emptyList()
+        ))
+
+        passengerRepository.save(Passenger(
+                "Blazhko",
+                "Alina",
+                "Viktorovna",
+                6012, 144552,
+                emptyList()
+        ))
+
+        passengerRepository.save(Passenger(
+                "Kiryanova",
+                "Marina",
+                "Nikolaevna",
+                6012, 258369,
+                emptyList()
+        ))
+    }
+
+    private fun initTickets() {
+        ticketRepository.save(Ticket(
+                true, 1,
+                flightRepository.getOne(1),
+                passengerRepository.getOne(1)
+        ))
+
+        ticketRepository.save(Ticket(
+                true, 2,
+                flightRepository.getOne(1),
+                passengerRepository.getOne(2)
         ))
     }
 }

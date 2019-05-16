@@ -22,8 +22,9 @@ data class Ticket(
         val flight: com.kiryanov.database.entity.Flight,
 
         @JsonView(Passenger::class)
-        @OneToOne(mappedBy = "ticket", fetch = FetchType.EAGER)
-        val passenger: com.kiryanov.database.entity.Passenger? = null,
+        @ManyToOne(optional = false)
+        @JoinColumn(name = "passenger_id")
+        val passenger: com.kiryanov.database.entity.Passenger,
 
         @JsonView(ID::class)
         @Id

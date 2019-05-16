@@ -14,6 +14,7 @@ export default new Vuex.Store({
         places: Store(Vue.resource('/api/flights{/id}/places')),
         tickets: Store(Vue.resource('/api/tickets{/id}')),
         users: Store(Vue.resource('/api/user{/id}')),
+        passengers: Store(Vue.resource('/api/passenger{/id}')),
     }
 })
 

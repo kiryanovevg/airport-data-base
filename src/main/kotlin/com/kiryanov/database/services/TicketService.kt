@@ -35,7 +35,8 @@ class TicketService {
         if (flight.tickets.size >= flight.airplane.capacity)
             throw RestException("Нет свободных мест на этот рейс")
 
-        return ticketRepository.save(Ticket(luggage, place, flight))
+        throw RestException("Not implemented")
+//        return ticketRepository.save(Ticket(luggage, place, flight, ))
     } ?: throw RestException("Empty RequestBody")
 
     fun delete(id: Long) {
