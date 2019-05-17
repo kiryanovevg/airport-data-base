@@ -21,7 +21,13 @@
                     </div>
                 </div>
 
-                <hr>
+                <app-list :loading="loading"
+                          :items="airlines"
+                          v-model="selected"
+                          :fill="item => item.name"
+                />
+
+                <!--<hr>
 
                 <div class="spinner-border" role="status"
                      v-if="loading"
@@ -41,7 +47,7 @@
                     </li>
                 </ul>
 
-                <hr>
+                <hr>-->
 
             </div>
             <div class="col" v-if="selected">
@@ -98,9 +104,6 @@
                 add: 'airlines/addAction',
                 remove: 'airlines/removeAction',
             }),
-            selectAirline(index) {
-                this.selected = this.airlines[index]
-            },
 
             loadAirlines() {
                 const self = this;

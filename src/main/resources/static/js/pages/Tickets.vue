@@ -57,21 +57,11 @@
                     <button type="button" class="btn btn-primary" v-on:click="addTicket">Add</button>
                 </div>
 
-                <hr>
-
-                <app-loading :loading="loading.tickets"/>
-                <ul v-if="!loading.tickets" class="list-group">
-                    <li
-                            class="list-group-item list-group-item-action"
-                            v-for="(ticket, index) in tickets"
-                            v-on:click="selectTicket(index)"
-                            v-bind:class="{ active: ticket === selected.ticket }"
-                    >
-                        {{ getTicketText(ticket) }}
-                    </li>
-                </ul>
-
-                <hr>
+                <app-list :loading="loading.tickets"
+                          :items="tickets"
+                          v-model="selected.ticket"
+                          :fill="getTicketText"
+                />
 
             </div>
 

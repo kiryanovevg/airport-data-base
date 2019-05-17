@@ -52,21 +52,10 @@
                     </div>
                 </div>
 
-                <hr>
-
-                <ul class="list-group"
-                >
-                    <li
-                            class="list-group-item list-group-item-action"
-                            v-for="(airplane, index) in airplanes"
-                            v-on:click="selectAirplane(index)"
-                            v-bind:class="{ active: airplane === selected.airplane }"
-                    >
-                        {{index + 1}} - {{ airplane.model }}
-                    </li>
-                </ul>
-
-                <hr>
+                <app-list :items="airplanes"
+                          v-model="selected.airplane"
+                          :fill="item => item.model"
+                />
 
             </div>
 
@@ -134,10 +123,6 @@
                 this.input.model = null;
                 this.input.capacity = null;
                 this.selected.airline = null;
-            },
-
-            selectAirplane: function(index) {
-                this.selected.airplane = this.airplanes[index];
             },
 
             loadAirlines: function() {

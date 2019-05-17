@@ -86,19 +86,10 @@
                     <hr>
                 </div>
 
-                <ul class="list-group"
-                >
-                    <li
-                            class="list-group-item list-group-item-action"
-                            v-for="(schedule, index) in schedules"
-                            v-on:click="selectSchedule(index)"
-                            v-bind:class="{ active: schedule === selected.schedule }"
-                    >
-                        {{index + 1}} - {{ getScheduleText(schedule) }}
-                    </li>
-                </ul>
-
-                <hr>
+                <app-list :items="schedules"
+                          v-model="selected.schedule"
+                          :fill="getScheduleText"
+                />
 
             </div>
         </div>

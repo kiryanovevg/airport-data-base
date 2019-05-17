@@ -55,21 +55,11 @@
                     </div>
                 </div>
 
-                <hr>
-
-                <app-loading :loading="loading.flights"/>
-                <ul v-if="!loading.flights" class="list-group">
-                    <li
-                            class="list-group-item list-group-item-action"
-                            v-for="(flight, index) in flights"
-                            v-on:click="selectFlight(index)"
-                            v-bind:class="{ active: flight === selected.flight }"
-                    >
-                        {{ listItem(flight) }}
-                    </li>
-                </ul>
-
-                <hr>
+                <app-list :loading="loading.flights"
+                          :items="flights"
+                          v-model="selected.flight"
+                          :fill="listItem"
+                />
 
             </div>
 

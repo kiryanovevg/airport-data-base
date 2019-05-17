@@ -49,7 +49,12 @@
                     </div>
                 </div>
 
-                <hr>
+                <app-list :items="cities"
+                          v-model="selected.city"
+                          :fill="item => item.name"
+                />
+
+                <!--<hr>
                 <ul class="list-group">
                     <li
                             class="list-group-item list-group-item-action"
@@ -61,7 +66,7 @@
                     </li>
                 </ul>
 
-                <hr>
+                <hr>-->
 
             </div>
 
@@ -86,41 +91,12 @@
                                       :fill="item => item.name"
                         />
 
-                        <!--<div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <label class="input-group-text" for="fromCityInput">From</label>
-                            </div>
-                            <select class="custom-select" id="fromCityInput"
-                                    v-model="input.fromCity"
-                            >
-                                <option
-                                        v-for="(city, index) in cities"
-                                        :value="city"
-                                >{{ city.name }}</option>
-                            </select>
-&lt;!&ndash;                            <span>Выбрано: {{ input.fromCity }}</span>&ndash;&gt;
-                        </div>-->
-
                         <app-dropdown :title="'to'"
                                       :items="cities"
                                       v-model="input.toCity"
                                       :fill="item => item.name"
                         />
 
-                        <!--<div class="input-group mb-3 ml-4">
-                            <div class="input-group-prepend">
-                                <label class="input-group-text" for="toCityInput">To</label>
-                            </div>
-                            <select class="custom-select" id="toCityInput"
-                                    v-model="input.toCity"
-                            >
-                                <option
-                                        v-for="(city, index) in cities"
-                                        :value="city"
-                                >{{ city.name }}</option>
-                            </select>
-&lt;!&ndash;                            <span>Выбрано: {{ input.toCity }}</span>&ndash;&gt;
-                        </div>-->
                     </div>
 
                     <div class="d-flex justify-content-end">
@@ -148,18 +124,10 @@
                     <hr>
                 </div>
 
-                <ul class="list-group">
-                    <li
-                            class="list-group-item list-group-item-action"
-                            v-for="(direction, index) in directions"
-                            v-on:click="selectDirection(index)"
-                            v-bind:class="{ active: direction === selected.city }"
-                    >
-                        {{ index + 1 }} -
-                        {{ direction.fromCity.name }} =>
-                        {{ direction.toCity.name }}
-                    </li>
-                </ul>
+                <app-list :items="directions"
+                          v-model="selected.direction"
+                          :fill="item => `${item.fromCity.name} => ${item.toCity.name}`"
+                />
             </div>
 
 
@@ -213,10 +181,6 @@
             ...mapMutations({
                 setDirections: 'directions/setMutation'
             }),
-
-            selectCity: function(index) {
-                this.selected.city = this.cities[index];
-            },
 
             selectDirection: function (index) {
                 this.selected.direction = this.directions[index];

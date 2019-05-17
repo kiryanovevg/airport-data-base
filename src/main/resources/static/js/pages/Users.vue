@@ -63,21 +63,11 @@
                     <button type="button" class="btn btn-primary" v-on:click="addUser">Add</button>
                 </div>
 
-                <hr>
-
-                <app-loading :loading="loading.users"/>
-                <ul v-if="!loading.users" class="list-group">
-                    <li
-                            class="list-group-item list-group-item-action"
-                            v-for="(user, index) in users"
-                            v-on:click="selectUser(index)"
-                            v-bind:class="{ active: user === selected.user}"
-                    >
-                        {{ user.login }}
-                    </li>
-                </ul>
-
-                <hr>
+                <app-list :loading="loading.users"
+                          :items="users"
+                          v-model="selected.user"
+                          :fill="item => item.login"
+                />
 
             </div>
 
