@@ -79,8 +79,14 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between">
-                        <div class="input-group mb-3">
+                    <div>
+                        <app-dropdown :title="'From'"
+                                      :items="cities"
+                                      v-model="input.fromCity"
+                                      :fill="item => item.name"
+                        />
+
+                        <!--<div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <label class="input-group-text" for="fromCityInput">From</label>
                             </div>
@@ -92,10 +98,16 @@
                                         :value="city"
                                 >{{ city.name }}</option>
                             </select>
-<!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
-                        </div>
+&lt;!&ndash;                            <span>Выбрано: {{ input.fromCity }}</span>&ndash;&gt;
+                        </div>-->
 
-                        <div class="input-group mb-3 ml-4">
+                        <app-dropdown :title="'to'"
+                                      :items="cities"
+                                      v-model="input.toCity"
+                                      :fill="item => item.name"
+                        />
+
+                        <!--<div class="input-group mb-3 ml-4">
                             <div class="input-group-prepend">
                                 <label class="input-group-text" for="toCityInput">To</label>
                             </div>
@@ -107,8 +119,8 @@
                                         :value="city"
                                 >{{ city.name }}</option>
                             </select>
-<!--                            <span>Выбрано: {{ input.toCity }}</span>-->
-                        </div>
+&lt;!&ndash;                            <span>Выбрано: {{ input.toCity }}</span>&ndash;&gt;
+                        </div>-->
                     </div>
 
                     <div class="d-flex justify-content-end">

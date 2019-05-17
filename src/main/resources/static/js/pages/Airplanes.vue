@@ -39,19 +39,11 @@
                         >
                     </div>
 
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <label class="input-group-text" for="inputGroupAirline">Airline</label>
-                        </div>
-                        <select class="custom-select" id="inputGroupAirline"
-                                v-model="selected.airline"
-                        >
-                            <option
-                                    v-for="(airline, index) in airlines"
-                                    v-bind:value="airline"
-                            >{{ airline.name }}</option>
-                        </select>
-                    </div>
+                    <app-dropdown :title="'Airline'"
+                                  :items="airlines"
+                                  :fill="item => item.name"
+                                  v-model="selected.airline"
+                    />
                     <span>Выбрано: {{ selected.airline }}</span>
 
                     <div class="d-flex justify-content-end">

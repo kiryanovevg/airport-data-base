@@ -31,11 +31,11 @@
     </div>
 </template>
 <!--
-<app-dropdown :title="'Flights'"
-              :loading="loading.passengers"
-              :items="passengers"
-              v-model="input.passenger"
-              :fill="getPassengerText"
+<app-dropdown :title="'Title'"
+              :loading="loading"
+              :items="items"
+              :fill="item => item"
+              v-model="input"
 />
 -->
 <script>
@@ -68,7 +68,7 @@
         },
         methods: {
             selectItem(index) {
-                this.$emit('input', this.items[index])
+                this.$emit('input', this.filtered[index])
             }
         }
     }
@@ -76,12 +76,16 @@
     function contains(value, search) {
         let result = false;
         Object.keys(value).forEach(key => {
-            if (value[key] instanceof Object) {
-                if (!result) result = contains(value[key], search);
-            } else if (!result) result = value[key]
-                .toString()
-                .toLowerCase()
-                .includes(search.toLowerCase());
+            if (value[key] != null) {
+                if (value[key] instanceof Date) {
+
+                } else if (value[key] instanceof Object) {
+                    if (!result) result = contains(value[key], search);
+                } else if (!result) result = value[key]
+                    .toString()
+                    .toLowerCase()
+                    .includes(search.toLowerCase());
+            }
         });
         return result;
     }

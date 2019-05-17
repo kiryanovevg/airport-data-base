@@ -34,8 +34,8 @@
                 <app-dropdown :title="'Flight'"
                               :loading="loading.flights"
                               :items="flights"
-                              v-model="input.flight"
                               :fill="getFlightText"
+                              v-model="input.flight"
                 />
 
                 <div class="mb-3" v-if="visibilityPlaces">

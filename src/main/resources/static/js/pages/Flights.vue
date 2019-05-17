@@ -24,65 +24,26 @@
                         >
                     </div>
 
-                    <div class="mb-3">
-                        <app-loading :loading="loading.airplanes"/>
-                        <div class="input-group"
-                             v-if="!loading.airplanes"
-                        >
-                            <div class="input-group-prepend">
-                                <label class="input-group-text" for="airplaneInput">Airplane</label>
-                            </div>
-                            <select class="custom-select" id="airplaneInput"
-                                    v-model="input.airplane"
-                            >
-                                <option
-                                        v-for="(airplane, index) in airplanes"
-                                        :value="airplane"
-                                >{{ airplane.model }}</option>
-                            </select>
-                            <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
-                        </div>
-                    </div>
+                    <app-dropdown :title="'Airplane'"
+                                  :loading="loading.airplanes"
+                                  :items="airplanes"
+                                  v-model="input.airplane"
+                                  :fill="item => item.model"
+                    />
 
-                    <div class="mb-3">
-                        <app-loading :loading="loadingDirections"/>
-                        <div class="input-group"
-                             v-if="!loadingDirections"
-                        >
-                            <div class="input-group-prepend">
-                                <label class="input-group-text" for="directionInput">Direction</label>
-                            </div>
-                            <select class="custom-select" id="directionInput"
-                                    v-model="input.direction"
-                            >
-                                <option
-                                        v-for="(direction, index) in directions"
-                                        :value="direction"
-                                >{{ getDirectionText(direction) }}</option>
-                            </select>
-                            <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
-                        </div>
-                    </div>
+                    <app-dropdown :title="'Direction'"
+                                  :loading="loadingDirections"
+                                  :items="directions"
+                                  v-model="input.direction"
+                                  :fill="getDirectionText"
+                    />
 
-                    <div class="mb-3">
-                        <app-loading :loading="loading.schedules"/>
-                        <div class="input-group mb-3"
-                             v-if="!loading.schedules"
-                        >
-                            <div class="input-group-prepend">
-                                <label class="input-group-text" for="scheduleInput">Schedule</label>
-                            </div>
-                            <select class="custom-select" id="scheduleInput"
-                                    v-model="input.schedule"
-                            >
-                                <option
-                                        v-for="(schedule, index) in notUsedSchedules"
-                                        :value="schedule"
-                                >{{ getScheduleText(schedule)}}</option>
-                            </select>
-                            <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
-                        </div>
-                    </div>
+                    <app-dropdown :title="'Schedule'"
+                                  :loading="loading.schedules"
+                                  :items="notUsedSchedules"
+                                  v-model="input.schedule"
+                                  :fill="getScheduleText"
+                    />
 
                     <div class="btn-group d-flex justify-content-end"
                          role="group"
