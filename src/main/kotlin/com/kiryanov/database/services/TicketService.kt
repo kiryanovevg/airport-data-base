@@ -19,6 +19,9 @@ class TicketService {
     @Autowired
     private lateinit var flightService: FlightService
 
+    @Autowired
+    private lateinit var passengerService: PassengerService
+
     fun getAll(): List<Ticket> = ticketRepository
             .findAll()
 
@@ -27,16 +30,18 @@ class TicketService {
             ?: throw RestException("Ticket not found")
 
     fun addTicket(dto: HashMap<String, String>?): Ticket = dto?.let { map ->
+        val passenger = passengerService.findById(map.getValueSafety("passenger").toLong())
         val flight = flightService.findById(map.getValueSafety("flight").toLong())
         val place = map.getValueSafety("place").toInt()
-        val luggage = map.getValueSafety("luggage").toBoolean()
+        val luggage = map.getValueSafety("luggage").toInt()
 
+        if (ticketRepository.findAll().firstOrNull { it.luggage == luggage } != null)
+            throw RestException("Багаж с таким номером уже существует")
         if (place <= 0) throw RestException("Неверное место")
         if (flight.tickets.size >= flight.airplane.capacity)
             throw RestException("Нет свободных мест на этот рейс")
 
-        throw RestException("Not implemented")
-//        return ticketRepository.save(Ticket(luggage, place, flight, ))
+        return ticketRepository.save(Ticket(luggage, place, flight, passenger))
     } ?: throw RestException("Empty RequestBody")
 
     fun delete(id: Long) {

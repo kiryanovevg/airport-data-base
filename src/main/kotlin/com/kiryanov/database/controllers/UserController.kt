@@ -18,6 +18,11 @@ class UserController {
         return userService.getAll()
     }
 
+    @GetMapping("/roles")
+    fun getUserRoles(): List<String> {
+        return userService.getRoleList()
+    }
+
     @PostMapping
     fun addUser(@RequestBody dto: HashMap<String, String>?): User {
         return userService.addUser(dto)
@@ -30,5 +35,5 @@ class UserController {
     }
 
     @PostMapping("/login")
-    fun loginUser(@RequestBody user: User?): User = userService.getUser(user)
+    fun loginUser(@RequestBody dto: HashMap<String, String>?): User = userService.getUser(dto)
 }

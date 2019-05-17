@@ -14,29 +14,33 @@ class UserService {
 
     fun getAll(): List<User> = userRepository.findAll()
 
+    fun getRoleList(): List<String> = listOf(
+            User.Role.ADMIN, User.Role.CASHIER, User.Role.DISPATCHER, User.Role.SECURITY
+    )
+
     fun addUser(dto: HashMap<String, String>?): User = dto?.let { map ->
         val login = map.getValueSafety("login")
         val password = map.getValueSafety("password")
+        val role = map.getValueSafety("role")
 
         if (userRepository.findAll().firstOrNull { it.login == login } != null)
             throw RestException("Пользователь с таким именем уже существует")
 
-        return userRepository.save(User(login, password, true))
+        return userRepository.save(User(login, password, role))
     } ?: throw RestException("Empty RequestBody")
 
-    fun getUser(user: User?): User {
-        if (user != null) {
-            if (user.login.isNotEmpty() && user.password.isNotEmpty()) {
-                val findUser = userRepository.findAll().find { user.login == it.login }
-//                val findUser = userRepository.findByLogin(user.login)
-                if (findUser != null) {
-                    if (findUser.password == user.password) {
-                        return findUser
-                    } else throw RestException("Неверный пароль")
-                } else throw RestException("Пользователь не найден")
-            } else throw RestException("Введите данные")
-        } else throw RestException("Введите данные")
-    }
+    fun getUser(dto: HashMap<String, String>?): User = dto?.let { map ->
+        val login = map.getValueSafety("login")
+        val password = map.getValueSafety("password")
+
+        return userRepository
+                .findAll()
+                .firstOrNull { it.login == login }
+                ?.let { user ->
+                    if (user.password != password) throw RestException("Неверный пароль")
+                    else user
+                } ?: throw RestException("Пользователь не найден")
+    } ?: throw RestException("Empty RequestBody")
 
     fun delete(id: Long) {
         if (userRepository.existsById(id)) {

@@ -3,16 +3,16 @@
 
         <div class="row">
             <div class="col-md-auto mt-2 d-flex justify-content-center"
-                 v-for="(link) in links"
+                 v-for="(route) in routes"
             >
 <!--                :class="{ 'mr-3': (index !== links.length - 1)}"-->
                 <router-link class="box btn card text-center bg-light"
                              style="max-width: 18rem;"
-                             :to="link.path"
+                             :to="route.path"
                 >
                     <div class="card-body">
                         <p class="card-text">
-                            {{ link.name }}
+                            {{ route.component.name }}
                         </p>
                     </div>
                 </router-link>
@@ -23,21 +23,8 @@
 
 <script>
     export default {
+        props: ['routes'],
         name: "Main",
-        data() {
-            return {
-                links: [
-                    {name: 'Airlines', path: '/airlines'},
-                    {name: 'Airplanes', path: '/airplanes'},
-                    {name: 'Directions', path: '/directions'},
-                    {name: 'Schedule', path: '/schedule'},
-                    {name: 'Flights', path: '/flights'},
-                    {name: 'Tickets', path: '/tickets'},
-                    {name: 'Users', path: '/users'},
-                    {name: 'Passenger', path: '/passenger'},
-                ]
-            }
-        }
     }
 </script>
 

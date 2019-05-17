@@ -10,7 +10,7 @@ data class Ticket(
 
         @JsonView(Luggage::class)
         @Column(nullable = false)
-        val luggage: Boolean,
+        val luggage: Int,
 
         @JsonView(Place::class)
         @Column(nullable = false)

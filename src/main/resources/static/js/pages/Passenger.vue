@@ -16,31 +16,24 @@
                 <div class="mb-2">
                     <div class="input-group input-group-sm mb-2">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">Surname</span>
+                            <span class="input-group-text">Full name</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Surname" aria-describedby="inputGroup-sizing-sm"
+                        <input type="text" class="form-control"
+                               aria-label="Surname"
+                               placeholder="Surname"
+                               aria-describedby="inputGroup-sizing-sm"
                                v-model="input.surname"
                         >
-                    </div>
-                </div>
-
-                <div class="mb-2">
-                    <div class="input-group input-group-sm mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Name</span>
-                        </div>
-                        <input type="text" class="form-control" aria-label="Name" aria-describedby="inputGroup-sizing-sm"
+                        <input type="text" class="form-control"
+                               aria-label="Name"
+                               placeholder="Name"
+                               aria-describedby="inputGroup-sizing-sm"
                                v-model="input.name"
                         >
-                    </div>
-                </div>
-
-                <div class="mb-2">
-                    <div class="input-group input-group-sm mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Patronymic</span>
-                        </div>
-                        <input type="text" class="form-control" aria-label="Patronymic" aria-describedby="inputGroup-sizing-sm"
+                        <input type="text" class="form-control"
+                               aria-label="Patronymic"
+                               placeholder="Patronymic"
+                               aria-describedby="inputGroup-sizing-sm"
                                v-model="input.patronymic"
                         >
                     </div>
@@ -48,21 +41,30 @@
 
                 <div class="input-group input-group-sm mb-2">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Series</span>
+                        <span class="input-group-text">Passport</span>
                     </div>
-                    <input type="number" min="1" class="form-control" aria-label="Series" aria-describedby="inputGroup-sizing-sm"
+                    <input type="number" min="1" class="form-control"
+                           aria-label="Series"
+                           placeholder="Series"
+                           aria-describedby="inputGroup-sizing-sm"
                            v-model.number="input.series"
+                    >
+                    <input type="number" min="1" class="form-control"
+                           aria-label="Number"
+                           placeholder="Number"
+                           aria-describedby="inputGroup-sizing-sm"
+                           v-model.number="input.number"
                     >
                 </div>
 
-                <div class="input-group input-group-sm mb-2">
+                <!--<div class="input-group input-group-sm mb-2">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Number</span>
                     </div>
                     <input type="number" min="1" class="form-control" aria-label="Number" aria-describedby="inputGroup-sizing-sm"
                            v-model.number="input.number"
                     >
-                </div>
+                </div>-->
 
                 <app-loading :loading="loading.add"/>
                 <div class="btn-group d-flex justify-content-end"
@@ -203,11 +205,11 @@
                     number: self.input.number,
                 };
 
-                self.selected.surname = null;
-                self.selected.name = null;
-                self.selected.patronymic = null;
-                self.selected.series = null;
-                self.selected.number = null;
+                self.input.surname = null;
+                self.input.name = null;
+                self.input.patronymic = null;
+                self.input.series = null;
+                self.input.number = null;
 
                 self.selected.passenger = null;
                 self.createPassenger({

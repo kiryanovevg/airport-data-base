@@ -16,9 +16,9 @@ data class User(
         @Column(nullable = false)
         val password: String,
 
-        @JsonView(AdminPermission::class)
+        @JsonView(Role::class)
         @Column(nullable = false)
-        val adminPermission: Boolean,
+        val role: String,
 
         @JsonView(ID::class)
         @Id
@@ -29,6 +29,11 @@ data class User(
 ) {
         interface Login
         interface Password
-        interface AdminPermission
         interface ID
+        object Role {
+                const val ADMIN = "Admin"
+                const val DISPATCHER = "Dispatcher"
+                const val CASHIER = "Cashier"
+                const val SECURITY = "Security"
+        }
 }

@@ -23,15 +23,15 @@ class DataComponent @Autowired constructor(
     }
 
     fun clear() {
-        airlineRepository.deleteAllInBatch()
-        airplaneRepository.deleteAllInBatch()
-        directionRepository.deleteAllInBatch()
-        cityRepository.deleteAllInBatch()
-        scheduleRepository.deleteAllInBatch()
-        flightRepository.deleteAllInBatch()
-        userRepository.deleteAllInBatch()
-        ticketRepository.deleteAllInBatch()
-        passengerRepository.deleteAllInBatch()
+        airlineRepository.findAll().forEach { airlineRepository.delete(it) }
+        airplaneRepository.findAll().forEach { airplaneRepository.delete(it) }
+        directionRepository.findAll().forEach { directionRepository.delete(it) }
+        cityRepository.findAll().forEach { cityRepository.delete(it) }
+        scheduleRepository.findAll().forEach { scheduleRepository.delete(it) }
+        flightRepository.findAll().forEach { flightRepository.delete(it) }
+        userRepository.findAll().forEach { userRepository.delete(it) }
+        passengerRepository.findAll().forEach { passengerRepository.delete(it) }
+        ticketRepository.findAll().forEach { ticketRepository.delete(it) }
     }
 
     fun fill() {
@@ -46,8 +46,12 @@ class DataComponent @Autowired constructor(
     }
 
     private fun initUsers() {
-        userRepository.save(User("Marina", "111", true))
-        userRepository.save(User("Irina", "111", true))
+        userRepository.save(User("Marina", "111", User.Role.ADMIN))
+        userRepository.save(User("Irina", "111", User.Role.ADMIN))
+        userRepository.save(User("admin", "+", User.Role.ADMIN))
+        userRepository.save(User("cashier", "+", User.Role.CASHIER))
+        userRepository.save(User("dispatcher", "+", User.Role.DISPATCHER))
+        userRepository.save(User("security", "+", User.Role.SECURITY))
     }
 
     private fun initAirlines() {
@@ -151,13 +155,13 @@ class DataComponent @Autowired constructor(
 
     private fun initTickets() {
         ticketRepository.save(Ticket(
-                true, 1,
+                111, 1,
                 flightRepository.getOne(1),
                 passengerRepository.getOne(1)
         ))
 
         ticketRepository.save(Ticket(
-                true, 2,
+                222, 2,
                 flightRepository.getOne(1),
                 passengerRepository.getOne(2)
         ))

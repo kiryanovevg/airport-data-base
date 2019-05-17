@@ -16,22 +16,40 @@
                 <div class="mb-3">
                     <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">Username</span>
+                            <span class="input-group-text">Credentials</span>
                         </div>
-                        <input type="text" class="form-control" aria-label="Username" aria-describedby="inputGroup-sizing-sm"
+                        <input type="text" class="form-control"
+                               aria-label="Username"
+                               placeholder="Username"
+                               aria-describedby="inputGroup-sizing-sm"
                                v-model="input.username"
+                        >
+                        <input type="text" class="form-control"
+                               aria-label="Password"
+                               placeholder="Password"
+                               aria-describedby="inputGroup-sizing-sm"
+                               v-model="input.password"
                         >
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <div class="input-group input-group-sm mb-3">
+                    <app-loading :loading="loading.roles"/>
+                    <div class="input-group input-group-sm"
+                         v-if="!loading.roles"
+                    >
                         <div class="input-group-prepend">
-                            <span class="input-group-text">Password</span>
+                            <label class="input-group-text" for="roleInput">Role</label>
                         </div>
-                        <input type="text" class="form-control" aria-label="Password" aria-describedby="inputGroup-sizing-sm"
-                               v-model="input.password"
+                        <select class="custom-select" id="roleInput"
+                                v-model="input.role"
                         >
+                            <option
+                                    v-for="(role, index) in roles"
+                                    :value="role"
+                            >{{ role }}</option>
+                        </select>
+                        <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
                     </div>
                 </div>
 
@@ -74,7 +92,7 @@
                 </div>
 
                 <div>Password: {{ selected.user.password }}</div>
-                <div>Admin permission: {{ selected.user.adminPermission }}</div>
+                <div>Role: {{ selected.user.role }}</div>
             </div>
         </div>
     </div>
@@ -90,6 +108,7 @@
                 input: {
                     username: null,
                     password: null,
+                    role: null,
                 },
                 selected: {
                     user: null,
@@ -97,21 +116,25 @@
                 loading: {
                     add: null,
                     users: null,
+                    roles: null,
                 },
                 message: null,
             }
         },
         created() {
             this.loadUsers();
+            this.loadRoles();
         },
         computed: {
             ...mapState({
                 users: state => state.users.data,
+                roles: state => state.roles.data,
             })
         },
         methods: {
             ...mapActions({
                 getUsers: 'users/getAction',
+                getRoles: 'roles/getAction',
                 createUser: 'users/addAction',
                 removeUser: 'users/removeAction',
             }),
@@ -123,20 +146,23 @@
             clearAddField: function () {
                 this.input.username = null;
                 this.input.password = null;
+                this.input.role = null;
             },
 
             addUser() {
                 const self = this;
 
                 if (!self.input.username
-                    || !self.input.password) {
+                    || !self.input.password
+                    || !self.input.role) {
                     self.message = "Заполните все поля!";
                     return;
                 }
 
                 const data = {
                     login: self.input.username,
-                    password: self.input.password
+                    password: self.input.password,
+                    role: self.input.role
                 };
 
                 self.input.username = null;
@@ -171,6 +197,16 @@
                     ui(loading, msg) {
                         if (msg != null) self.message = msg;
                         self.loading.users = loading;
+                    }
+                });
+            },
+
+            loadRoles() {
+                const self = this;
+                self.getRoles({
+                    ui(loading, msg) {
+                        if (msg != null) self.message = msg;
+                        self.loading.roles = loading;
                     }
                 });
             },

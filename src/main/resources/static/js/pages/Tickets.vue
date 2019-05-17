@@ -13,44 +13,38 @@
 
                 <app-message :message="message"/>
 
-                <div class="mb-3">
-                    <app-loading :loading="loading.flights"/>
-                    <div class="input-group"
-                         v-if="!loading.flights"
-                    >
-                        <div class="input-group-prepend">
-                            <label class="input-group-text" for="flightInput">Flight</label>
-                        </div>
-                        <select class="custom-select" id="flightInput"
-                                v-model="input.flight"
-                        >
-                            <option
-                                    v-for="(flight, index) in flights"
-                                    :value="flight"
-                            >{{ getFlightText(flight) }}</option>
-                        </select>
-                        <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
+                <app-dropdown :title="'Passenger'"
+                              :loading="loading.passengers"
+                              :items="passengers"
+                              v-model="input.passenger"
+                              :fill="getPassengerText"
+                />
+
+                <div class="input-group mb-3"
+                     v-if="!loading.passengers"
+                >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Luggage</span>
                     </div>
+                    <input type="number" min="1" class="form-control" aria-label="Luggage" aria-describedby="inputGroup-sizing-sm"
+                           v-model.number="input.luggage"
+                    >
                 </div>
 
+                <app-dropdown :title="'Flight'"
+                              :loading="loading.flights"
+                              :items="flights"
+                              v-model="input.flight"
+                              :fill="getFlightText"
+                />
+
                 <div class="mb-3" v-if="visibilityPlaces">
-                    <app-loading :loading="loading.places"/>
-                    <div class="input-group"
-                         v-if="!loading.places"
-                    >
-                        <div class="input-group-prepend">
-                            <label class="input-group-text" for="placeInput">Place</label>
-                        </div>
-                        <select class="custom-select" id="placeInput"
-                                v-model="input.place"
-                        >
-                            <option
-                                    v-for="(place, index) in places"
-                                    :value="place"
-                            >{{ place }}</option>
-                        </select>
-                        <!--                            <span>Выбрано: {{ input.fromCity }}</span>-->
-                    </div>
+                    <app-dropdown :title="'Place'"
+                                  :loading="loading.places"
+                                  :items="places"
+                                  v-model="input.place"
+                                  :fill="item => item"
+                    />
                 </div>
 
                 <app-loading :loading="loading.add"/>
@@ -91,20 +85,17 @@
                     >Delete</button>
                 </div>
 
+                <div>Passenger: {{ selectedPassenger }}</div>
                 <div>Flight: #{{ selected.ticket.flight.id }}</div>
-                <br>
                 <div>Place: {{ selected.ticket.place }}</div>
-                <br>
                 <div>Price: {{ selected.ticket.flight.price }}</div>
-                <br>
-                <div>Airplane: {{ selected.ticket.flight.airplane.model }}</div>
-                <br>
+                <div>Luggage: {{ selected.ticket.luggage }}</div>
                 <div>Direction: {{
                     selected.ticket.flight.direction.fromCity.name
                     + ' => '
                     + selected.ticket.flight.direction.toCity.name
                     }}</div>
-                <br>
+                <div>Airplane: {{ selected.ticket.flight.airplane.model }}</div>
                 <div>Schedule: {{ selectedSchedule }}</div>
             </div>
         </div>
@@ -122,6 +113,8 @@
                 input: {
                     flight: null,
                     place: null,
+                    passenger: null,
+                    luggage: null,
                 },
                 selected: {
                     ticket: null,
@@ -131,6 +124,7 @@
                     flights: null,
                     tickets: null,
                     places: null,
+                    passengers: null,
                 },
                 message: null,
             }
@@ -138,6 +132,7 @@
         created() {
             this.loadFlights();
             this.loadTickets();
+            this.loadPassengers();
         },
         watch: {
             inputFlight(newValue, oldValue) {
@@ -149,6 +144,7 @@
                 flights: state => state.flights.data,
                 tickets: state => state.tickets.data,
                 places: state => state.places.data,
+                passengers: state => state.passengers.data,
             }),
 
             inputFlight() {
@@ -161,16 +157,29 @@
 
             selectedSchedule() {
                 return getScheduleText(parseSchedule(this.selected.ticket.flight.schedule))
+            },
+
+            selectedPassenger() {
+                return this.getPassengerText(this.selected.ticket.passenger);
             }
         },
         methods: {
             ...mapActions({
+                getPassengers: 'passengers/getAction',
                 getFlights: 'flights/getAction',
                 getTickets: 'tickets/getAction',
                 getPlaces: 'places/getAction',
                 createTicket: 'tickets/addAction',
                 removeTicket: 'tickets/removeAction',
             }),
+
+            getPassengerText(passenger) {
+                return passenger.surname + ' '
+                    + passenger.name + ' '
+                    + passenger.patronymic + ' | '
+                    + passenger.series + ' '
+                    + passenger.number
+            },
 
             getTicketText(ticket) {
                 return '#' + ticket.flight.id + ' | ' + this.getFlightText(ticket.flight) + ' | Place: ' + ticket.place
@@ -188,6 +197,8 @@
             },
 
             clearAddField() {
+                this.input.passenger = null;
+                this.input.luggage = null;
                 this.input.flight = null;
                 this.input.place = null;
             },
@@ -196,15 +207,17 @@
                 const self = this;
 
                 if (!self.input.flight
-                    || !self.input.place) {
+                    || !self.input.place
+                    || !self.input.luggage) {
                     self.message = "Заполните все поля!";
                     return;
                 }
 
                 const data = {
                     flight: self.input.flight.id,
-                    luggage: true,
-                    place: self.input.place
+                    luggage: self.input.luggage,
+                    place: self.input.place,
+                    passenger: self.input.passenger.id
                 };
 
                 self.clearAddField();
@@ -255,7 +268,7 @@
                 self.getTickets({
                     ui(loading, msg) {
                         if (msg != null) self.message = msg;
-                        self.loading.flights = loading;
+                        self.loading.tickets = loading;
                     }
                 });
             },
@@ -269,6 +282,16 @@
                     ui(loading, msg) {
                         if (msg != null) self.message = msg;
                         self.loading.places = loading;
+                    }
+                });
+            },
+
+            loadPassengers() {
+                const self = this;
+                self.getPassengers({
+                    ui(loading, msg) {
+                        if (msg != null) self.message = msg;
+                        self.loading.passengers = loading;
                     }
                 });
             },
