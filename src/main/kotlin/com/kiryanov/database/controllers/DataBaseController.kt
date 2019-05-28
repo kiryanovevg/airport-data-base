@@ -1,16 +1,18 @@
 package com.kiryanov.database.controllers
 
+import org.apache.tomcat.util.http.fileupload.IOUtils
+import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.servlet.http.HttpServletResponse
 
-@RestController
+@Controller
 @RequestMapping("/api/db")
 class DataBaseController {
 
@@ -19,9 +21,24 @@ class DataBaseController {
     private val database = "dbektvt94eq8il"
     private val password = "39013be08b25bb41026d92a39398a4eb94bb0276348e1522e79229cbd94b5586"
 
+    /*@GetMapping("/test")
+    @ResponseBody
+    fun test(response: HttpServletResponse) {
+        val file = File(System.getProperty("user.home")
+                + File.separator + "app-debug.apk")
+
+        response.contentType = "application/apk"
+        response.setHeader("Content-disposition", "attachment; filename=${file.name}")
+        IOUtils.copy(file.inputStream(), response.outputStream)
+    }*/
+
     @GetMapping("/backup")
-    fun backup(): File {
-        return execute(host, user, database, password,"backup")
+    fun backup(response: HttpServletResponse) {
+        val file = execute(host, user, database, password,"backup")
+
+        response.contentType = "application/sql"
+        response.setHeader("Content-disposition", "attachment; filename=${file.name}")
+        IOUtils.copy(file.inputStream(), response.outputStream)
     }
 
     @GetMapping("/restore")
