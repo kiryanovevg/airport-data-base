@@ -1,13 +1,9 @@
 package com.kiryanov.database.services
 
 import com.kiryanov.database.controllers.RestException
-import com.kiryanov.database.entity.City
 import com.kiryanov.database.entity.Flight
 import com.kiryanov.database.getValueSafety
-import com.kiryanov.database.repositories.AirplaneRepository
-import com.kiryanov.database.repositories.DirectionRepository
 import com.kiryanov.database.repositories.FlightRepository
-import com.kiryanov.database.repositories.ScheduleRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service

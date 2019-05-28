@@ -14,7 +14,8 @@ class DataBaseController {
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
 
-    private val jBackupController = JBackupController()
+    @Autowired
+    private lateinit var jBackupController: JBackupController
 
     private val host = "ec2-54-247-70-127.eu-west-1.compute.amazonaws.com"
     private val user = "uqpjfgcmmyytyv"

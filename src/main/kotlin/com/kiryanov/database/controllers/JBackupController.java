@@ -1,5 +1,7 @@
 package com.kiryanov.database.controllers;
 
+import org.springframework.stereotype.Service;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class JBackupController {
 
     public JBackupController() {
