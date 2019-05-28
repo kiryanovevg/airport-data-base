@@ -142,11 +142,11 @@ class DataBaseController {
             "restore" -> {
                 commands.add("pg_restore")
                 commands.add("-h")
-                commands.add("localhost")
+                commands.add(host)
                 commands.add("-p")
                 commands.add("5432")
                 commands.add("-U")
-                commands.add("postgres")
+                commands.add(user)
                 commands.add("-d")
                 commands.add(databaseName)
                 commands.add("-v")
