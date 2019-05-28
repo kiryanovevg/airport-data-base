@@ -12,6 +12,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
+import java.lang.StringBuilder
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 
@@ -38,12 +39,12 @@ class DataBaseController {
 
     @GetMapping("/backup")
     fun backup(response: HttpServletResponse): String {
-        val file = execute(host, user, database, password,"backup", backupFilePath.absolutePath)
+        val result = execute(host, user, database, password,"backup", backupFilePath.absolutePath)
 
         response.contentType = "application/sql"
-        response.setHeader("Content-disposition", "attachment; filename=${file.name}")
-        IOUtils.copy(file.inputStream(), response.outputStream)
-        return "File Downloaded"
+        response.setHeader("Content-disposition", "attachment; filename=${result.first.name}")
+        IOUtils.copy(result.first.inputStream(), response.outputStream)
+        return result.second
     }
 
     @GetMapping("/restore")
@@ -71,14 +72,14 @@ class DataBaseController {
         if (!tempFile.exists()) tempFile.createNewFile()
         IOUtils.copy(file.inputStream, tempFile.outputStream())
 
-        execute(host, user, database, password,"restore", tempFile.absolutePath)
+        val result = execute(host, user, database, password,"restore", tempFile.absolutePath)
 
-        return ResponseEntity.ok("Ok")
+        return ResponseEntity.ok(result.second)
     }
 
     private fun execute(host: String, user: String,
                         databaseName: String, databasePassword: String,
-                        type: String, filePath: String): File {
+                        type: String, filePath: String): Pair<File, String> {
 
         val commands = getPgCommands(host, user, databaseName, filePath, type)
         return if (commands.isNotEmpty()) {
@@ -88,11 +89,13 @@ class DataBaseController {
 
                 val process = pb.start()
 
+                val builder = StringBuilder()
                 BufferedReader(
                         InputStreamReader(process.errorStream)).use { buf ->
                     var line: String? = buf.readLine()
                     while (line != null) {
                         System.err.println(line)
+                        builder.append(line)
                         line = buf.readLine()
                     }
                 }
@@ -101,7 +104,7 @@ class DataBaseController {
                 process.destroy()
 
                 println("===> Success on $type process.")
-                File(filePath)
+                Pair(File(filePath), builder.toString())
             } catch (ex: IOException) {
                 println("Exception: $ex")
                 throw RestException(ex.message)
