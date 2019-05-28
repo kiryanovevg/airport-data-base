@@ -152,7 +152,7 @@
                 const data = {
                     login: self.input.username,
                     password: self.input.password,
-                    role: self.input.role
+                    userRole: self.input.role
                 };
 
                 self.input.username = null;

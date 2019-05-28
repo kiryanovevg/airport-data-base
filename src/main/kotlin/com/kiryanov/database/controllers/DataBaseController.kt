@@ -38,13 +38,13 @@ class DataBaseController {
     }*/
 
     @GetMapping("/backup")
-    fun backup(response: HttpServletResponse): String {
+    fun backup(response: HttpServletResponse): ResponseEntity<String> {
         val result = execute(host, user, database, password,"backup", backupFilePath.absolutePath)
 
         response.contentType = "application/sql"
         response.setHeader("Content-disposition", "attachment; filename=${result.first.name}")
         IOUtils.copy(result.first.inputStream(), response.outputStream)
-        return result.second
+        return ResponseEntity.ok(result.second)
     }
 
     @GetMapping("/restore")
