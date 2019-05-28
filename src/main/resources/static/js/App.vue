@@ -104,10 +104,10 @@
             saveProfile(profile) {
                 const data = {
                     login: profile.login,
-                    role: profile.role
+                    role: profile.userRole
                 };
 
-                this.profile = profile;
+                this.profile = data;
                 localStorage.profile = JSON.stringify(profile);
             },
             clearProfile() {

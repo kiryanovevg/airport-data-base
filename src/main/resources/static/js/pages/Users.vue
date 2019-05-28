@@ -82,7 +82,7 @@
                 </div>
 
                 <div>Password: {{ selected.user.password }}</div>
-                <div>Role: {{ selected.user.role }}</div>
+                <div>Role: {{ selected.user.userRole }}</div>
             </div>
         </div>
     </div>

@@ -68,7 +68,8 @@
         },
         methods: {
             selectItem(index) {
-                this.$emit('input', this.filtered[index])
+                this.$emit('input', this.filtered[index]);
+                this.selected = null;
             }
         }
     }

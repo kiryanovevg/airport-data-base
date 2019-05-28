@@ -18,7 +18,7 @@ data class User(
 
         @JsonView(Role::class)
         @Column(nullable = false)
-        val role: String,
+        val userRole: String,
 
         @JsonView(ID::class)
         @Id

@@ -29,7 +29,7 @@
 
                 <!--<hr>
 
-                <div class="spinner-border" role="status"
+                <div class="spinner-border" userRole="status"
                      v-if="loading"
                 >
                     <span class="sr-only">Loading...</span>

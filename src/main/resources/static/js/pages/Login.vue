@@ -68,7 +68,7 @@
 
                 apiLogin.login(login, password).then(
                     success => {
-                        if (success.body.role) {
+                        if (success.body.userRole) {
                             self.$emit('authenticate', success.body)
                         } else {
                             self.message = 'У пользователя нет прав'

@@ -21,12 +21,12 @@ class UserService {
     fun addUser(dto: HashMap<String, String>?): User = dto?.let { map ->
         val login = map.getValueSafety("login")
         val password = map.getValueSafety("password")
-        val role = map.getValueSafety("role")
+        val userRole = map.getValueSafety("userRole")
 
         if (userRepository.findAll().firstOrNull { it.login == login } != null)
             throw RestException("Пользователь с таким именем уже существует")
 
-        return userRepository.save(User(login, password, role))
+        return userRepository.save(User(login, password, userRole))
     } ?: throw RestException("Empty RequestBody")
 
     fun getUser(dto: HashMap<String, String>?): User = dto?.let { map ->
