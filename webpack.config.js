@@ -6,7 +6,7 @@ module.exports = {
     devtool: 'source-map',
     entry: path.join(__dirname, 'src', 'main', 'resources', 'static', 'js', 'index.js'),
     output: {
-        path: path.join(__dirname, 'src', 'main', 'resources', 'static'),
+        path: path.join(__dirname, 'src', 'main', 'resources', 'static', 'out'),
         publicPath: '/',
         filename: 'main.js'
     },
