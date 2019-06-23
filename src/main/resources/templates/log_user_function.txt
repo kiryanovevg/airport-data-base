@@ -1,0 +1,55 @@
+-- auto-generated definition
+create table user_temp
+(
+    id        bigint       not null
+        constraint user_temp_pkey
+            primary key,
+    action    varchar(255) not null,
+    login     varchar(255) not null,
+    password  varchar(255) not null,
+    user_id   bigint       not null,
+    user_role varchar(255) not null
+);
+
+alter table user_temp
+    owner to uqpjfgcmmyytyv;
+
+create or replace function user_log()
+returns trigger as $body$
+    DECLARE
+        act varchar(255);
+        tbl user_table;
+    begin
+        if (tg_op = 'INSERT') then
+            act = 'INSERT';
+            tbl = new;
+        end if;
+
+        /*if (tg_op = 'UPDATE') then
+            act = 'UPDATE';
+            tbl = new;
+        end if;*/
+
+        if (tg_op = 'DELETE') then
+            act = 'DELETE';
+            tbl = old;
+        end if;
+
+        insert into user_temp values((select count(*) from user_temp) + 1, act, tbl.login, tbl.password, tbl.id, tbl.user_role);
+
+        return tbl;
+    end;
+$body$
+language plpgsql;
+
+CREATE trigger insert_user
+    before insert
+    on user_table
+    for each row
+    execute procedure user_log();
+
+CREATE trigger delete_user
+    before delete
+    on user_table
+    for each row
+    execute procedure user_log();

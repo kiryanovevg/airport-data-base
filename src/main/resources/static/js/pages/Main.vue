@@ -16,8 +16,15 @@
                         </p>
                     </div>
                 </router-link>
+
             </div>
         </div>
+
+        <br>
+        <br>
+        <br>
+        <a href="/api/db/backup">Backup</a> /
+        <a href="/api/db/restore">Restore</a>
     </div>
 </template>
 

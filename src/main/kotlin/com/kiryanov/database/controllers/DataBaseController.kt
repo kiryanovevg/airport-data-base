@@ -24,7 +24,7 @@ class DataBaseController {
     private val user = "uqpjfgcmmyytyv"
     private val database = "dbektvt94eq8il"
     private val password = "39013be08b25bb41026d92a39398a4eb94bb0276348e1522e79229cbd94b5586"
-    private val backupFilePath = File(System.getProperty("user.home") + File.separator + "backup.sql")
+    private val backupFilePath = File(System.getProperty("user.home") + File.separator + "backup.sql").absolutePath
 
     /*@GetMapping("/test")
     @ResponseBody
@@ -39,7 +39,7 @@ class DataBaseController {
 
     @GetMapping("/backup")
     fun backup(response: HttpServletResponse): ResponseEntity<String> {
-        val result = execute(host, user, database, password,"backup", backupFilePath.absolutePath)
+        val result = execute(host, user, database, password,"backup", backupFilePath)
 
         response.contentType = "application/sql"
         response.setHeader("Content-disposition", "attachment; filename=${result.first.name}")
@@ -52,7 +52,7 @@ class DataBaseController {
         val page = "<html>\n" +
                 "\n" +
                 "<body>\n" +
-                "<h1>Spring MVC file upload example</h1>\n" +
+                "<h1>Upload backup file</h1>\n" +
                 "\n" +
                 "<form method=\"POST\" action=\"/api/db/restore\" enctype=\"multipart/form-data\">\n" +
                 "    <input type=\"file\" name=\"file\" /><br/>\n" +

@@ -46,12 +46,12 @@ class DataComponent @Autowired constructor(
     }
 
     private fun initUsers() {
-        userRepository.save(User("Marina", "111", User.Role.ADMIN))
-        userRepository.save(User("Irina", "111", User.Role.ADMIN))
-        userRepository.save(User("admin", "+", User.Role.ADMIN))
-        userRepository.save(User("cashier", "+", User.Role.CASHIER))
-        userRepository.save(User("dispatcher", "+", User.Role.DISPATCHER))
-        userRepository.save(User("security", "+", User.Role.SECURITY))
+        userRepository.save(User("Marina", "111", User.Role.ADMIN, userRepository.count() + 1))
+        userRepository.save(User("Irina", "111", User.Role.ADMIN, userRepository.count() + 1))
+        userRepository.save(User("admin", "+", User.Role.ADMIN, userRepository.count() + 1))
+        userRepository.save(User("cashier", "+", User.Role.CASHIER, userRepository.count() + 1))
+        userRepository.save(User("dispatcher", "+", User.Role.DISPATCHER, userRepository.count() + 1))
+        userRepository.save(User("security", "+", User.Role.SECURITY, userRepository.count() + 1))
     }
 
     private fun initAirlines() {

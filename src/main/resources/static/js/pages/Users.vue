@@ -59,6 +59,8 @@
                      aria-label="Basic example"
                      v-if="!loading.add"
                 >
+                    <app-loading :loading="loading.backup"/>
+                    <button type="button" class="btn btn-dark" v-on:click="backupUser" v-if="!loading.backup">Backup</button>
                     <button type="button" class="btn btn-secondary" v-on:click="clearAddField">Clear</button>
                     <button type="button" class="btn btn-primary" v-on:click="addUser">Add</button>
                 </div>
@@ -90,6 +92,7 @@
 
 <script>
     import {mapActions, mapState} from "vuex";
+    import api from "api/login";
 
     export default {
         name: "Users",
@@ -107,6 +110,7 @@
                     add: null,
                     users: null,
                     roles: null,
+                    backup: null,
                 },
                 message: null,
             }
@@ -199,6 +203,24 @@
                         self.loading.roles = loading;
                     }
                 });
+            },
+
+            backupUser() {
+                const self = this;
+                self.loading.backup = true;
+
+                api.backup().then(
+                    success => {
+                        self.message = success.bodyText;
+                        self.loading.backup = false;
+                        self.loadUsers()
+                    },
+
+                    error => {
+                        self.message = error.bodyText;
+                        self.loading.backup = false;
+                    }
+                );
             },
         }
     }

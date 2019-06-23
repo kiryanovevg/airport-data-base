@@ -23,6 +23,11 @@ class UserController {
         return userService.getRoleList()
     }
 
+    @GetMapping("/backup")
+    fun backupLastAction(): ResponseEntity<String> {
+        return ResponseEntity.ok(userService.backupLastAction())
+    }
+
     @PostMapping
     fun addUser(@RequestBody dto: HashMap<String, String>?): User {
         return userService.addUser(dto)

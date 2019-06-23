@@ -13,6 +13,7 @@ interface FlightRepository : JpaRepository<Flight, Long>
 interface PassengerRepository : JpaRepository<Passenger, Long>
 interface ScheduleRepository : JpaRepository<Schedule, Long>
 interface TicketRepository : JpaRepository<Ticket, Long>
+interface UserChangesRepository : JpaRepository<UserChanges, Long>
 interface UserRepository : JpaRepository<User, Long> {
 
 //    @Query(value = "SELECT u from User u where u.login = :login")
