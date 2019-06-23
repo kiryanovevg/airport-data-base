@@ -67,7 +67,7 @@ class DataBaseController {
 
     @PostMapping("/restore")
     fun postRestore(@RequestParam("file") file: MultipartFile): ResponseEntity<String> {
-        val fileName = "uploadedTempFile.sql"
+        val fileName = "uploadedTempFile"
         val tempFile = File(fileName)
         if (!tempFile.exists()) tempFile.createNewFile()
         IOUtils.copy(file.inputStream, tempFile.outputStream())
