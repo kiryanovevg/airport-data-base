@@ -18,8 +18,6 @@ class UserService {
     @Autowired
     private lateinit var userChangesRepository: UserChangesRepository
 
-    private var backup = false
-
     fun getAll(): List<User> = userRepository.findAll()
 
     fun getRoleList(): List<String> = listOf(
@@ -34,7 +32,9 @@ class UserService {
         if (userRepository.findAll().firstOrNull { it.login == login } != null)
             throw RestException("Пользователь с таким именем уже существует")
 
-        return userRepository.save(User(login, password, userRole, userRepository.findAll().last().id + 1))
+        val id = if (userRepository.count() != 0.toLong()) userRepository.findAll().last().id + 1 else 1
+
+        return userRepository.save(User(login, password, userRole, id))
     } ?: throw RestException("Empty RequestBody")
 
     fun getUser(dto: HashMap<String, String>?): User = dto?.let { map ->
@@ -59,8 +59,6 @@ class UserService {
     fun backupLastAction(): String = if (userChangesRepository.count() == 0.toLong())
         throw RestException("Actions list is empty")
     else {
-        while (backup) {}
-        backup = true
         val changes = userChangesRepository.findAll().last()
         when {
             changes.action == UserChanges.Action.INSERT -> {
@@ -75,7 +73,6 @@ class UserService {
         }.also {
             userChangesRepository.delete(changes)
             userChangesRepository.delete(userChangesRepository.findAll().last())
-            backup = false
         }
     }
 }
