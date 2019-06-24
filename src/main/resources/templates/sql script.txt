@@ -1,0 +1,182 @@
+create table airline
+(
+    id   bigint       not null
+        constraint airline_pkey
+            primary key,
+    name varchar(255) not null
+);
+
+alter table airline
+    owner to uqpjfgcmmyytyv;
+
+create table airplane
+(
+    id         bigint       not null
+        constraint airplane_pkey
+            primary key,
+    capacity   integer      not null,
+    model      varchar(255) not null,
+    airline_id bigint
+        constraint fk2ll2iaql8fcnyqsg75yoeufde
+            references airline
+);
+
+alter table airplane
+    owner to uqpjfgcmmyytyv;
+
+create table city
+(
+    id   bigint       not null
+        constraint city_pkey
+            primary key,
+    name varchar(255) not null
+);
+
+alter table city
+    owner to uqpjfgcmmyytyv;
+
+create table direction
+(
+    id           bigint not null
+        constraint direction_pkey
+            primary key,
+    from_city_id bigint
+        constraint fkgs2o72o8gjfvbwh3siq1gjdch
+            references city,
+    to_city_id   bigint
+        constraint fknnlrrohmbmhy8j7rh3ewdsv5a
+            references city
+);
+
+alter table direction
+    owner to uqpjfgcmmyytyv;
+
+create table passenger
+(
+    id         bigint       not null
+        constraint passenger_pkey
+            primary key,
+    name       varchar(255) not null,
+    number     integer      not null,
+    patronymic varchar(255) not null,
+    series     integer      not null,
+    surname    varchar(255) not null
+);
+
+alter table passenger
+    owner to uqpjfgcmmyytyv;
+
+create table schedule
+(
+    id        bigint    not null
+        constraint schedule_pkey
+            primary key,
+    arrival   timestamp not null,
+    departure timestamp not null
+);
+
+alter table schedule
+    owner to uqpjfgcmmyytyv;
+
+create table flight
+(
+    id           bigint  not null
+        constraint flight_pkey
+            primary key,
+    price        integer not null,
+    airplane_id  bigint
+        constraint fkb8t4272gfgo1feyyidvscbjm0
+            references airplane,
+    direction_id bigint
+        constraint fki7vrhwrydepy05bmtgg57n5yf
+            references direction,
+    schedule_id  bigint
+        constraint fkmyx9t3dr7fo6kxyh58j39ylcm
+            references schedule
+);
+
+alter table flight
+    owner to uqpjfgcmmyytyv;
+
+create table ticket
+(
+    id           bigint  not null
+        constraint ticket_pkey
+            primary key,
+    luggage      integer not null,
+    place        integer not null,
+    flight_id    bigint  not null
+        constraint fkfju27cbcbl1w16qeora1r636q
+            references flight,
+    passenger_id bigint  not null
+        constraint fk3y0nr3g8pk6ygc173mjaaumgh
+            references passenger
+);
+
+alter table ticket
+    owner to uqpjfgcmmyytyv;
+
+create table user_temp
+(
+    id        bigint       not null
+        constraint user_temp_pkey
+            primary key,
+    action    varchar(255) not null,
+    login     varchar(255) not null,
+    password  varchar(255) not null,
+    user_id   bigint       not null,
+    user_role varchar(255) not null
+);
+
+alter table user_temp
+    owner to uqpjfgcmmyytyv;
+
+create table user_table
+(
+    id        bigint       not null
+        constraint user_table_pkey
+            primary key,
+    login     varchar(255) not null,
+    password  varchar(255) not null,
+    user_role varchar(255) not null
+);
+
+alter table user_table
+    owner to uqpjfgcmmyytyv;
+
+create function user_log() returns trigger
+    language plpgsql
+as
+$$
+DECLARE
+    tbl user_table;
+begin
+    if (tg_op = 'INSERT') then
+        tbl = new;
+    end if;
+
+    if (tg_op = 'DELETE') then
+        tbl = old;
+    end if;
+
+    insert into user_temp
+    values ((select count(*) from user_temp) + 1, tg_op, tbl.login, tbl.password, tbl.id, tbl.user_role);
+
+    return tbl;
+end;
+$$;
+
+alter function user_log() owner to uqpjfgcmmyytyv;
+
+create trigger delete_user
+    before delete
+    on user_table
+    for each row
+execute procedure user_log();
+
+create trigger insert_user
+    before insert
+    on user_table
+    for each row
+execute procedure user_log();
+
