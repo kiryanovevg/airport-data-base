@@ -151,6 +151,8 @@ class DataBaseController {
             }
             RESTORE -> {
                 commands.add("pg_restore")
+                commands.add("--clean")
+                commands.add("--create")
                 commands.add("-h")
                 commands.add(host)
                 commands.add("-p")
