@@ -102,7 +102,7 @@ class DataBaseController {
                     var line: String? = buf.readLine()
                     while (line != null) {
                         System.err.println(line)
-                        builder.append(line).append("\n")
+                        builder.append(line).append("<br>")
                         line = buf.readLine()
                     }
                 }
