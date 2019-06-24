@@ -20,11 +20,16 @@ import javax.servlet.http.HttpServletResponse
 @RequestMapping("/api/db")
 class DataBaseController {
 
+    companion object {
+        private const val BACKUP = "backup"
+        private const val RESTORE = "restore"
+    }
+
     private val host = "ec2-54-247-70-127.eu-west-1.compute.amazonaws.com"
     private val user = "uqpjfgcmmyytyv"
     private val database = "dbektvt94eq8il"
     private val password = "39013be08b25bb41026d92a39398a4eb94bb0276348e1522e79229cbd94b5586"
-    private val backupFilePath = File(System.getProperty("user.home") + File.separator + "backup.sql").absolutePath
+    private val backupFilePath = File(System.getProperty("user.home") + File.separator + "backupAirportDB").absolutePath
 
     /*@GetMapping("/test")
     @ResponseBody
@@ -39,9 +44,10 @@ class DataBaseController {
 
     @GetMapping("/backup")
     fun backup(response: HttpServletResponse): ResponseEntity<String> {
-        val result = execute(host, user, database, password,"backup", backupFilePath)
+        val result = execute(host, user, database, password, BACKUP, backupFilePath)
 
-        response.contentType = "application/sql"
+//        response.contentType = "application/sql"
+        response.contentType = "application/octet-stream"
         response.setHeader("Content-disposition", "attachment; filename=${result.first.name}")
         IOUtils.copy(result.first.inputStream(), response.outputStream)
         return ResponseEntity.ok(result.second)
@@ -69,10 +75,11 @@ class DataBaseController {
     fun postRestore(@RequestParam("file") file: MultipartFile): ResponseEntity<String> {
         val fileName = "uploadedTempFile"
         val tempFile = File(fileName)
-        if (!tempFile.exists()) tempFile.createNewFile()
+        tempFile.deleteOnExit()
+        tempFile.createNewFile()
         IOUtils.copy(file.inputStream, tempFile.outputStream())
 
-        val result = execute(host, user, database, password,"restore", tempFile.absolutePath)
+        val result = execute(host, user, database, password, RESTORE, tempFile.absolutePath)
 
         return ResponseEntity.ok(result.second)
     }
@@ -125,7 +132,7 @@ class DataBaseController {
 
         val commands = ArrayList<String>()
         when (type) {
-            "backup" -> {
+            BACKUP -> {
                 commands.add("pg_dump")
                 commands.add("-h") //database server host
                 commands.add(host)
@@ -142,7 +149,7 @@ class DataBaseController {
                 commands.add("-d") //database name
                 commands.add(databaseName)
             }
-            "restore" -> {
+            RESTORE -> {
                 commands.add("pg_restore")
                 commands.add("-h")
                 commands.add(host)
