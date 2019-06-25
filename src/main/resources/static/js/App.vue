@@ -1,16 +1,16 @@
 <template>
     <div>
-        <button
-                v-if="profile"
-                @click="logout">
-            Logout
-        </button>
-        <button
-                v-if="profile && $route.path !== '/'"
-                @click="navigateToMainPage">
-            MainPage
-        </button>
-
+        <div v-if="profile">
+            User: {{ profile.login }} - {{ profile.role }}
+            <button @click="logout">
+                Logout
+            </button>
+            <button
+                    v-if="profile && $route.path !== '/'"
+                    @click="navigateToMainPage">
+                MainPage
+            </button>
+        </div>
 <!--        <app-nav-bar/>-->
 
         <router-view
