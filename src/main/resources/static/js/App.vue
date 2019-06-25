@@ -45,7 +45,7 @@
         watch: {
             $route(newRoute, oldRoute) {
                 // console.log(newRoute.path + ' -> ' + oldRoute.path);
-                this.handlePath();
+                // this.handlePath();
             }
         },
         created() {
@@ -108,7 +108,7 @@
                 };
 
                 this.profile = data;
-                localStorage.profile = JSON.stringify(profile);
+                localStorage.profile = JSON.stringify(data);
             },
             clearProfile() {
                 this.profile = null;
