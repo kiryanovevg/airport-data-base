@@ -1,12 +1,11 @@
 <template>
     <div class="container pt-4 pb-4">
-        <div class="row">
+        <!--<div class="row">
             <div class="col">
                 <h1>Airplanes</h1>
             </div>
         </div>
-
-        <hr>
+        <hr>-->
 
         <div class="row">
             <div class="col-md-4">
@@ -146,7 +145,7 @@
                         const id = parseInt(self.$route.params.id, 10);
                         if (id) {
                             self.airplanes.forEach((item, index) => {
-                                if (item.id === id) self.selectAirplane(index)
+                                if (item.id === id) self.selected.airplane = item;
                             })
                         }
                     }

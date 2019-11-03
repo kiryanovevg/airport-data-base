@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import moment from "moment";
 
 Vue.use(Vuex);
 
@@ -130,12 +131,12 @@ export function getById(data, id) {
     return result;
 }
 
-export function getScheduleText(schedule) {
-    const dep = schedule.departure;
-    const arr = schedule.arrival;
+export const scheduleDateFormat = "DD MMMM YYYY HH:mm";
 
-    const depStr = `${dep.getDate()}-${dep.getMonth() + 1}-${dep.getFullYear()} ${dep.getHours()}:${dep.getMinutes()}`;
-    const arrStr = `${arr.getDate()}-${arr.getMonth() + 1}-${arr.getFullYear()} ${arr.getHours()}:${arr.getMinutes()}`;
+export function getScheduleText(schedule) {
+    moment.locale('ru');
+    const depStr = moment(schedule.departure).format(scheduleDateFormat);
+    const arrStr = moment(schedule.arrival).format(scheduleDateFormat);
 
     return depStr + ' => ' + arrStr
 }

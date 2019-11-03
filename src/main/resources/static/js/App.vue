@@ -1,17 +1,10 @@
 <template>
     <div>
-        <div v-if="profile">
-            User: {{ profile.login }} - {{ profile.role }}
-            <button @click="logout">
-                Logout
-            </button>
-            <button
-                    v-if="profile && $route.path !== '/'"
-                    @click="navigateToMainPage">
-                MainPage
-            </button>
-        </div>
-<!--        <app-nav-bar/>-->
+        <app-header
+                :profile="profile"
+                @logout="logout"
+                @navigateToMainPage="navigateToMainPage"
+        />
 
         <router-view
                 @authenticate="authenticate"
@@ -21,6 +14,7 @@
 </template>
 
 <script>
+    import Header from "./components/Header.vue";
     import NavBar from "./components/NavBar.vue";
 
     import Airlines from "./pages/Airlines.vue";
@@ -40,6 +34,7 @@
             }
         },
         components: {
+            'app-header': Header,
             'app-nav-bar': NavBar,
         },
         watch: {

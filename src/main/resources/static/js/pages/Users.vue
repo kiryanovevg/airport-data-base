@@ -1,12 +1,11 @@
 <template>
     <div class="container pt-4 pb-4">
-        <div class="row">
+        <!--<div class="row">
             <div class="col">
                 <h1>Users</h1>
             </div>
         </div>
-
-        <hr>
+        <hr>-->
 
         <div class="row">
             <div class="col-md-5">
@@ -60,7 +59,7 @@
                      v-if="!loading.add"
                 >
                     <app-loading :loading="loading.backup"/>
-                    <button type="button" class="btn btn-dark" v-on:click="backupUser" v-if="!loading.backup">Backup</button>
+<!--                    <button type="button" class="btn btn-dark" v-on:click="backupUser" v-if="!loading.backup">Backup</button>-->
                     <button type="button" class="btn btn-secondary" v-on:click="clearAddField">Clear</button>
                     <button type="button" class="btn btn-primary" v-on:click="addUser">Add</button>
                 </div>

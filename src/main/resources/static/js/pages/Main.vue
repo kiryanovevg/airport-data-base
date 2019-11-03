@@ -1,6 +1,8 @@
 <template>
     <div class="container pt-5 pb-5">
 
+        Choose category
+
         <div class="row">
             <div class="col-md-auto mt-2 d-flex justify-content-center"
                  v-for="(route) in routes"
@@ -23,8 +25,8 @@
         <br>
         <br>
         <br>
-        <a href="/api/db/backup">Backup</a> /
-        <a href="/api/db/restore">Restore</a>
+<!--        <a href="/api/db/backup">Backup</a> /-->
+<!--        <a href="/api/db/restore">Restore</a>-->
     </div>
 </template>
 

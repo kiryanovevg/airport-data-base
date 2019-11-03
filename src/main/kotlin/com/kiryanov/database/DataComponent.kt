@@ -23,15 +23,15 @@ class DataComponent @Autowired constructor(
     }
 
     fun clear() {
-        airlineRepository.findAll().forEach { airlineRepository.delete(it) }
-        airplaneRepository.findAll().forEach { airplaneRepository.delete(it) }
-        directionRepository.findAll().forEach { directionRepository.delete(it) }
-        cityRepository.findAll().forEach { cityRepository.delete(it) }
-        scheduleRepository.findAll().forEach { scheduleRepository.delete(it) }
-        flightRepository.findAll().forEach { flightRepository.delete(it) }
-        userRepository.findAll().forEach { userRepository.delete(it) }
-        passengerRepository.findAll().forEach { passengerRepository.delete(it) }
-        ticketRepository.findAll().forEach { ticketRepository.delete(it) }
+        ticketRepository.deleteAll()
+        passengerRepository.deleteAll()
+        userRepository.deleteAll()
+        flightRepository.deleteAll()
+        scheduleRepository.deleteAll()
+        cityRepository.deleteAll()
+        directionRepository.deleteAll()
+        airplaneRepository.deleteAll()
+        airlineRepository.deleteAll()
     }
 
     fun fill() {
@@ -46,36 +46,39 @@ class DataComponent @Autowired constructor(
     }
 
     private fun initUsers() {
-        userRepository.save(User("Marina", "111", User.Role.ADMIN, userRepository.count() + 1))
-        userRepository.save(User("Irina", "111", User.Role.ADMIN, userRepository.count() + 1))
-        userRepository.save(User("admin", "+", User.Role.ADMIN, userRepository.count() + 1))
-        userRepository.save(User("cashier", "+", User.Role.CASHIER, userRepository.count() + 1))
-        userRepository.save(User("dispatcher", "+", User.Role.DISPATCHER, userRepository.count() + 1))
-        userRepository.save(User("security", "+", User.Role.SECURITY, userRepository.count() + 1))
+        userRepository.save(User("Marina", "111", User.Role.ADMIN))
+        userRepository.save(User("Irina", "111", User.Role.ADMIN))
+        userRepository.save(User("admin", "+", User.Role.ADMIN))
+        userRepository.save(User("cashier", "+", User.Role.CASHIER))
+        userRepository.save(User("dispatcher", "+", User.Role.DISPATCHER))
+        userRepository.save(User("security", "+", User.Role.SECURITY))
     }
 
     private fun initAirlines() {
-        airlineRepository.save(Airline("S7", emptyList(), 1))
-        airlineRepository.save(Airline("Aeroflot", emptyList(), 2))
-        airlineRepository.save(Airline("Russia", emptyList(), 3))
-        airlineRepository.save(Airline("Utair", emptyList(), 4))
+        airlineRepository.save(Airline("S7", emptyList()))
+        airlineRepository.save(Airline("Aeroflot", emptyList()))
+        airlineRepository.save(Airline("Russia", emptyList()))
+        airlineRepository.save(Airline("Utair", emptyList()))
     }
 
     private fun initAirplanes() {
-        airplaneRepository.save(Airplane("Boeing-777", 5, airlineRepository.getOne(1)))
-        airplaneRepository.save(Airplane("Boeing-336", 5, airlineRepository.getOne(1)))
-        airplaneRepository.save(Airplane("СУ-26", 2, airlineRepository.getOne(2)))
+        val airlines = airlineRepository.findAll()
+
+        airplaneRepository.save(Airplane("Boeing-777", 5, airlines[0]))
+        airplaneRepository.save(Airplane("Boeing-336", 5, airlines[1]))
+        airplaneRepository.save(Airplane("СУ-26", 2, airlines[2]))
     }
 
     private fun initDirections() {
-        cityRepository.save(City("Moscow", emptyList(), emptyList(), 1))
-        cityRepository.save(City("Salsk", emptyList(), emptyList(), 2))
-        cityRepository.save(City("Rostov-on-Don", emptyList(), emptyList(), 3))
-        cityRepository.save(City("Sankt-Petersburg", emptyList(), emptyList(), 4))
+        cityRepository.save(City("Moscow", emptyList(), emptyList()))
+        cityRepository.save(City("Salsk", emptyList(), emptyList()))
+        cityRepository.save(City("Rostov-on-Don", emptyList(), emptyList()))
+        cityRepository.save(City("Sankt-Petersburg", emptyList(), emptyList()))
 
-        directionRepository.save(Direction(cityRepository.getOne(1), cityRepository.getOne(2), emptyList()))
-        directionRepository.save(Direction(cityRepository.getOne(2), cityRepository.getOne(3), emptyList()))
-        directionRepository.save(Direction(cityRepository.getOne(3), cityRepository.getOne(4), emptyList()))
+        val cities = cityRepository.findAll()
+        directionRepository.save(Direction(cities[0], cities[2]))
+        directionRepository.save(Direction(cities[1], cities[3]))
+        directionRepository.save(Direction(cities[3], cities[2]))
     }
 
     private fun initSchedules() {
@@ -96,25 +99,25 @@ class DataComponent @Autowired constructor(
     private fun initFlights() {
         flightRepository.save(Flight(
                 1000,
-                scheduleRepository.getOne(1),
-                directionRepository.getOne(1),
-                airplaneRepository.getOne(3),
+                scheduleRepository.findAll()[0],
+                directionRepository.findAll()[1],
+                airplaneRepository.findAll()[2],
                 emptyList()
         ))
 
         flightRepository.save(Flight(
                 2000,
-                scheduleRepository.getOne(2),
-                directionRepository.getOne(2),
-                airplaneRepository.getOne(3),
+                scheduleRepository.findAll()[2],
+                directionRepository.findAll()[2],
+                airplaneRepository.findAll()[1],
                 emptyList()
         ))
 
         flightRepository.save(Flight(
                 300,
-                scheduleRepository.getOne(3),
-                directionRepository.getOne(3),
-                airplaneRepository.getOne(1),
+                scheduleRepository.findAll()[0],
+                directionRepository.findAll()[1],
+                airplaneRepository.findAll()[0],
                 emptyList()
         ))
     }
@@ -156,14 +159,14 @@ class DataComponent @Autowired constructor(
     private fun initTickets() {
         ticketRepository.save(Ticket(
                 111, 1,
-                flightRepository.getOne(1),
-                passengerRepository.getOne(1)
+                flightRepository.findAll()[0],
+                passengerRepository.findAll()[0]
         ))
 
         ticketRepository.save(Ticket(
                 222, 2,
-                flightRepository.getOne(1),
-                passengerRepository.getOne(2)
+                flightRepository.findAll()[0],
+                passengerRepository.findAll()[1]
         ))
     }
 }

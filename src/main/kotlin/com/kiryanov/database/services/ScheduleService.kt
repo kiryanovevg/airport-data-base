@@ -21,7 +21,10 @@ class ScheduleService {
         val departure = schedule.departure
         val arrival = schedule.arrival
 
-        if (departure.time >= arrival.time) throw RestException("Неверное расписание")
+        if (departure.time >= arrival.time) throw RestException(
+                if (departure.time == arrival.time) "Даты не должны совпадать!"
+                else "Дата вылета должна быть ранее даты прибытия!"
+        )
 
         return scheduleRepository.save(Schedule(departure, arrival))
     } ?: throw RestException("Empty RequestBody")

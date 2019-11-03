@@ -1,12 +1,11 @@
 <template>
     <div class="container pt-4 pb-4">
-        <div class="row">
+        <!--<div class="row">
             <div class="col">
                 <h1>Airlines</h1>
             </div>
         </div>
-
-        <hr>
+        <hr>-->
 
         <app-message :message="message"/>
 

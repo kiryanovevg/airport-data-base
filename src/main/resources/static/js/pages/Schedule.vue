@@ -1,65 +1,32 @@
 <template>
     <div class="container pt-5 pb-5">
-        <div class="row">
+        <!--<div class="row">
             <div class="col">
                 <h1>Schedule</h1>
             </div>
         </div>
-
-        <hr>
+        <hr>-->
 
         <app-message :message="message"/>
 
         <div class="row">
             <div class="col">
 
-                <div class="row">
-                    <div class="col col-md-10">
-                        <div class="d-flex justify-content-between">
-                            <div class="form-group mr-1">
-                                <input type="number" min="1" class="form-control" id="dayInput" placeholder="Day" v-model.number="input.date.day">
-                            </div>
-
-                            <div class="form-group mr-1">
-                                <input type="number" min="1" class="form-control" id="monthInput" placeholder="Month" v-model.number="input.date.month">
-                            </div>
-
-                            <div class="form-group mr-1">
-                                <input type="number" min="1" class="form-control" id="yearInput" placeholder="Year" v-model.number="input.date.year">
-                            </div>
-
-                            <div class="form-group mr-1">
-                                <input type="number" min="1" class="form-control" id="hourInput" placeholder="Hour" v-model.number="input.date.hour">
-                            </div>
-
-                            <div class="form-group mr-1">
-                                <input type="number" min="1" class="form-control" id="minuteInput" placeholder="Minute" v-model.number="input.date.minute">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-auto">
-                        <button type="button" class="btn btn-outline-primary" v-on:click="setCurrentDate">Текущее время</button>
-                        <button type="button" class="btn btn-outline-primary" v-on:click="setCurrentDatePlusDay">Текущее время + день</button>
-                    </div>
-                </div>
-
-                <div class="row d-flex justify-content-center" v-if="!loading.add">
+                <div class="row d-flex justify-content-center align-items-center" v-if="!loading.add">
                     <div class="col">
-                        <div class="d-inline-flex p-2 bd-highlight justify-content-center">
-                            {{ selected.departureDate }}
-                        </div>
+                        <app-date-time-picker
+                                :label="'Дата вылета'"
+                                v-model="input.departureDate"
+                        />
+                    </div>
+                    <div class="col">
+                        <app-date-time-picker
+                                v-model="input.arrivalDate"
+                                :label="'Дата прибытия'"
+                        />
                     </div>
                     <div class="col-md-auto">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-outline-primary" v-on:click="setDepartureDate">Дата вылета</button>
                             <button type="button" class="btn btn-primary" v-on:click="addSchedule">Add</button>
-                            <button type="button" class="btn btn-outline-primary" v-on:click="setArrivalDate">Дата прибытия</button>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="d-inline-flex p-2 bd-highlight justify-content-center">
-                            {{ selected.arrivalDate }}
-                        </div>
                     </div>
                 </div>
 
@@ -75,7 +42,14 @@
 
                 <div v-if="selected.schedule">
                     <div class="d-flex justify-content-between">
-                        <div class="d-inline-flex p-2 bd-highlight">{{ selected.schedule }}</div>
+                        <div class="col">
+                            <div>ID: {{ selected.schedule.id }}</div>
+                            <div>Время вылета: {{ selectedDepartureDate }}</div>
+                            <div>Время прибытия: {{ selectedArrivalDate }}</div>
+                        </div>
+                        <div class="d-flex p-2 bd-highlight">
+
+                        </div>
                         <button
                                 type="button"
                                 class="btn btn-danger"
@@ -98,24 +72,18 @@
 
 <script>
     import {mapActions, mapState} from "vuex";
-    import {parseSchedule, getScheduleText} from "../util/store.js";
+    import {parseSchedule, getScheduleText, scheduleDateFormat} from "../util/store.js";
+    import moment from "moment";
 
     export default {
         name: "Schedule",
         data() {
             return {
                 input: {
-                    date: {
-                        day: null,
-                        month: null,
-                        year: null,
-                        hour: null,
-                        minute: null
-                    }
+                    departureDate: null,
+                    arrivalDate: null,
                 },
                 selected: {
-                    arrivalDate: null,
-                    departureDate: null,
                     schedule: null
                 },
                 loading: {
@@ -127,7 +95,17 @@
         computed: {
             ...mapState({
                 schedules: (state) => state.schedule.data
-            })
+            }),
+
+            selectedDepartureDate() {
+                return moment(this.selected.schedule.departure)
+                    .format(scheduleDateFormat)
+            },
+
+            selectedArrivalDate() {
+                return moment(this.selected.schedule.arrival)
+                    .format(scheduleDateFormat)
+            }
         },
         created() {
             this.loadSchedules();
@@ -141,71 +119,6 @@
 
             getScheduleText(schedule) {
                 return getScheduleText(schedule);
-            },
-
-            selectSchedule: function (index) {
-                this.selected.schedule = this.schedules[index];
-            },
-
-            setCurrentDate: function () {
-                const date = new Date();
-                this.input.date.day = date.getDate();
-                this.input.date.month = date.getMonth() + 1;
-                this.input.date.year = date.getFullYear();
-                this.input.date.hour = date.getHours();
-                this.input.date.minute = date.getMinutes();
-            },
-
-            setCurrentDatePlusDay: function () {
-                const date = new Date();
-                this.input.date.day = date.getDate() + 1;
-                this.input.date.month = date.getMonth() + 1;
-                this.input.date.year = date.getFullYear();
-                this.input.date.hour = date.getHours();
-                this.input.date.minute = date.getMinutes();
-            },
-
-            clearInputFields: function () {
-                this.input.date.day = null;
-                this.input.date.month = null;
-                this.input.date.year = null;
-                this.input.date.hour = null;
-                this.input.date.minute = null;
-            },
-
-            checkInputFields: function () {
-                return this.input.date.year
-                    && this.input.date.month
-                    && this.input.date.day
-                    && this.input.date.hour
-                    && this.input.date.minute
-            },
-
-            setDate(setter) {
-                if (this.checkInputFields()) {
-                    const date = new Date(
-                        this.input.date.year,
-                        this.input.date.month - 1,
-                        this.input.date.day,
-                        this.input.date.hour,
-                        this.input.date.minute
-                    );
-
-                    setter(date);
-
-                    this.clearInputFields();
-                    this.message = null;
-                } else {
-                    this.message = "Заполните все поля!"
-                }
-            },
-
-            setDepartureDate: function () {
-                this.setDate(date => this.selected.departureDate = date);
-            },
-
-            setArrivalDate: function () {
-                this.setDate(date => this.selected.arrivalDate = date);
             },
 
             loadSchedules: function () {
@@ -227,18 +140,20 @@
             addSchedule: function () {
                 const self = this;
 
-                if (!self.selected.departureDate
-                    || !self.selected.arrivalDate) {
+                if (!self.input.departureDate
+                    || !self.input.arrivalDate) {
                     self.message = "Выберите даты!";
                     return
                 }
 
+                const body = {
+                    departure: self.input.departureDate,
+                    arrival: self.input.arrivalDate
+                };
+
                 self.selected.schedule = null;
                 self.createSchedule({
-                    data: {
-                        departure: self.selected.departureDate,
-                        arrival: self.selected.arrivalDate
-                    },
+                    data: body,
                     transformData(data) {
                         return parseSchedule(data);
                         // return data;
@@ -248,8 +163,8 @@
                         self.loading.add = loading;
                     },
                     complete() {
-                        self.selected.departureDate = null;
-                        self.selected.arrivalDate = null;
+                        self.input.departureDate = null;
+                        self.input.arrivalDate = null;
                     }
                 });
             },

@@ -12,8 +12,10 @@
   "dependencies": {
     "bootstrap": "^4.3.1",
     "jquery": "^3.4.0",
+    "moment": "^2.24.0",
     "popper.js": "^1.15.0",
     "vue": "^2.6.10",
+    "vue-ctk-date-time-picker": "^2.4.0",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.0.6",
     "vuex": "^3.1.0"
@@ -23,6 +25,7 @@
     "@babel/preset-env": "^7.4.4",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.1",
+    "file-loader": "^4.2.0",
     "style-loader": "^0.23.1",
     "vue-loader": "^15.7.0",
     "vue-template-compiler": "^2.6.10",

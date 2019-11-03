@@ -1,10 +1,8 @@
 package com.kiryanov.database.entity
 
 import com.fasterxml.jackson.annotation.JsonView
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import org.hibernate.annotations.GenericGenerator
+import javax.persistence.*
 
 @Entity
 @Table(name = "user_table")
@@ -24,9 +22,10 @@ data class User(
 
         @JsonView(ID::class)
         @Id
-//        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @GeneratedValue(generator = "increment")
+        @GenericGenerator(name= "increment", strategy= "increment")
         @Column(nullable = false, updatable = false)
-        val id: Long
+        val id: Long = 0
 ) {
         interface Login
         interface Password

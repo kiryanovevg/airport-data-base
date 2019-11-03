@@ -21,7 +21,7 @@ data class Direction(
 
         @JsonView(Flights::class)
         @OneToMany(mappedBy = "direction", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        val flights: List<Flight>,
+        val flights: List<Flight> = emptyList(),
 
         @JsonView(ID::class)
         @Id
