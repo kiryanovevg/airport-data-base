@@ -73,6 +73,7 @@
                     if (!to) {//not allowed
                         if (this.routes.length > 0) this.selected = this.routes[0];
                         if (this.selected) this.routeTo(this.selected);
+                        else this.$router.replace('/login');
                     } else {//allowed
                         this.selected = to
                     }
